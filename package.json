@@ -1,0 +1,26 @@
+{
+  "name": "PockerMotion",
+  "version": "1.0.0",
+  "description": "Pocker Motion Example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy": "cp app/index.html build/index.html && cp -a app/assets/ build/assets",
+    "build": "webpack && npm run copy",
+    "start": "npm run build && webpack-dev-server --devtool eval --progress --colors --hot --content-base build"
+  },
+  "author": "shown",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.9.1",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "css-loader": "^0.23.1",
+    "path": "^0.12.7",
+    "react": "^15.1.0",
+    "react-hot-loader": "^1.3.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

@@ -2,27 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ec6f39d-3039-4135-8d1b-4b8928526e03" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Actions/DragAction.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Actions/DragArea/BR.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Actions/DragArea/Base.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Components/BaseComponent.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Components/Card.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Components/Motion.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Contants/Contants.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Libraries/CookiesLibrary.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Libraries/EventsListenLibrary.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Libraries/SessionStorageLibrary.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Libraries/UnitLibrary.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Models/Model.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Poker.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Stages/BaseStage.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/dist/Stages/MainStage.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/main.js" afterPath="$PROJECT_DIR$/app/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webpack.config.js" afterPath="$PROJECT_DIR$/webpack.config.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="pokerMotion.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -348,12 +328,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1465277578623</updated>
-      <workItem from="1465277580251" duration="60246000" />
+      <workItem from="1465277580251" duration="60504000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="60246000" />
+    <option name="totallyTimeSpent" value="60504000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />

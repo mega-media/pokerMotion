@@ -17,7 +17,7 @@ var config = {
     loaders: [
       {
         test: /\.js[x]?$/,
-        loaders: ['react-hot', 'babel?presets[]=es2015'],
+        loaders: ['babel?presets[]=es2015'],
         include: path.join(__dirname, 'app')
       },
       {

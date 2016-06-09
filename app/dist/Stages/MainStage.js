@@ -12,20 +12,20 @@ import EventsListenLibrary from '../Libraries/EventsListenLibrary';
 export default class MainStage extends BaseStage {
   constructor(masterStage) {
     super();
+    sessionStorage.clear();
     this.masterStage = masterStage;
     this._registerComponents();
   }
 
   _registerComponents() {
-    EventsListenLibrary.register(this.masterStage.pokerPrimaryKey);
+    //EventsListenLibrary.register(this.masterStage.pokerPrimaryKey);
     new Card(this.masterStage);
     new Motion(this.masterStage);
   }
 
   preload() {
     console.log("========== preload all stage ==========");
-    EventsListenLibrary.dispatchEvent(Contants.CARD_CREATE);
-    sessionStorage.clear();
+    EventsListenLibrary.dispatchEvent(this.masterStage.pokerPrimaryKey,Contants.CARD_CREATE);
   }
 
   create() {

@@ -8,9 +8,14 @@ class SessionStorageLibrary {
       throw new Error("[SessionStroageLibrary]key type error : " + typeof KEY);
     }
     this.KEY = KEY;
+    if(typeof sessionStorage[this.KEY] === "undefined")
+    {
+      sessionStorage.setItem(this.KEY, JSON.stringify({}));
+    }
   }
 
-  _fetch() {
+  _fetch()
+  {
     try {
       JSON.parse(sessionStorage[this.KEY]);
     } catch (e) {

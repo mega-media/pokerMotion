@@ -24,7 +24,6 @@ export default class Poker {
     /* 場景 */
     this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame));
     this.phaserGame.state.start("loadStage");
-
   }
 
   destroy() {

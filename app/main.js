@@ -14,4 +14,6 @@ window.onload = function () {
    */
   game.parent = "container";
   game.start();
+  //var game2 = new Poker();
+  //game2.start();
 };

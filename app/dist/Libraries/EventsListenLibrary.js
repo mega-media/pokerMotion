@@ -1,27 +1,18 @@
 /**
  * Created by arShown on 2016/6/8.
  */
+"use strict";
 
 var EventsListenLibrary = {
-  eventKey: null,
-  register(key) {
-    this.eventKey = key;
-  },
-
-  addListener(eventName, callbacks) {
+  addListener(key, eventName, callbacks) {
     window.addEventListener(eventName, function (e) {
-      if (e.detail == this.eventKey) {
+      if (e.detail === key) {
         callbacks();
       }
     }.bind(this));
   },
-
-  removeListener() {
-
-  },
-
-  dispatchEvent(eventName) {
-    var event = new CustomEvent(eventName, {'detail': this.eventKey});
+  dispatchEvent(key, eventName) {
+    var event = new CustomEvent(eventName, {'detail': key});
     window.dispatchEvent(event);
   }
 };

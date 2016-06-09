@@ -13,7 +13,6 @@ export default class Card extends BaseComponent {
     super();
     this.masterStage = masterStage;
     this.padding = masterStage.stagePadding;
-    this._setListener();
     this._registerComponents();
   }
 
@@ -21,20 +20,30 @@ export default class Card extends BaseComponent {
     this.positions = [];
     this.stage = {};
     this.model = new Model(this.masterStage.pokerPrimaryKey);
+    this._setListener();
   }
 
   _setListener() {
-    EventsListenLibrary.register(this.masterStage.pokerPrimaryKey);
-    EventsListenLibrary.addListener(Contants.CARD_CREATE, this.create.bind(this));
-    EventsListenLibrary.addListener(Contants.CARD_UPDATE, this.update.bind(this));
+    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey, Contants.CARD_CREATE, this.create.bind(this));
+    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey, Contants.CARD_UPDATE, this.update.bind(this));
   }
 
   create() {
+    if (Object.keys(this.stage).length > 0) {
+      this.remove();
+    }
     this.positions = [
       [this.padding, this.padding],
       [this.padding, this.masterStage.height - this.padding],
       [this.masterStage.width - this.padding, this.masterStage.height - this.padding],
       [this.masterStage.width - this.padding, this.padding]];
+
+    this.model.set(Contants.CARD_DB_KEY,
+      [this.padding, this.padding],
+      [this.padding, this.masterStage.height - this.padding],
+      [this.masterStage.width - this.padding, this.masterStage.height - this.padding],
+      [this.masterStage.width - this.padding, this.padding]);
+
     return this.render();
   }
 

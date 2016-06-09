@@ -23,9 +23,8 @@ export default class Motion extends BaseComponent {
   }
 
   _setListener() {
-    EventsListenLibrary.register(this.masterStage.pokerPrimaryKey);
-    EventsListenLibrary.addListener(Contants.MOTION_UPDATE, this.update.bind(this));
-    EventsListenLibrary.addListener(Contants.MOTION_REMOVE, this.remove.bind(this));
+    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey,Contants.MOTION_UPDATE, this.update.bind(this));
+    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey,Contants.MOTION_REMOVE, this.remove.bind(this));
   }
 
   create() {

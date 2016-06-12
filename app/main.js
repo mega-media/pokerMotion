@@ -4,7 +4,12 @@
 "use strict";
 import Poker from './dist/Poker';
 
+var debug = true;
 window.onload = function () {
+  if(debug)
+  {
+    sessionStorage.clear();
+  }
 	/* Start */
   var game = new Poker();
   /**
@@ -12,6 +17,7 @@ window.onload = function () {
    * The DOM element into which this games canvas will be injected.
    * Either a DOM ID (string) or the element itself.
    */
+  game.cardImg = "poker1.png";
   game.parent = "container";
   game.start();
   //var game2 = new Poker();

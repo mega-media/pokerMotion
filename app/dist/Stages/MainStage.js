@@ -10,25 +10,26 @@ import Contants from '../Contants/Contants';
 import EventsListenLibrary from '../Libraries/EventsListenLibrary';
 
 export default class MainStage extends BaseStage {
-  constructor(masterStage) {
+  constructor(masterStage, cardImg) {
     super();
-    sessionStorage.clear();
     this.masterStage = masterStage;
+    this.cardImg = cardImg;
     this._registerComponents();
   }
 
   _registerComponents() {
-    //EventsListenLibrary.register(this.masterStage.pokerPrimaryKey);
     new Card(this.masterStage);
     new Motion(this.masterStage);
   }
 
   preload() {
     console.log("========== preload all stage ==========");
-    EventsListenLibrary.dispatchEvent(this.masterStage.pokerPrimaryKey,Contants.CARD_CREATE);
+    this.masterStage.load.image(Contants.CARD_IMAGE, "assets/images/pokerCover.jpg");
+    this.masterStage.load.image(Contants.MOTION_IMAGE, "assets/images/" + this.cardImg);
   }
 
   create() {
+    EventsListenLibrary.dispatchEvent(this.masterStage.pokerPrimaryKey, Contants.CARD_CREATE);
     var dragAction = new DragAction(this.masterStage);
     dragAction.startDragMotion();
   }

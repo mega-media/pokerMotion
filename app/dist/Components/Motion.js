@@ -12,8 +12,8 @@ export default class Motion extends BaseComponent {
   constructor(masterStage) {
     super();
     this.masterStage = masterStage;
-    this._setListener();
     this._registerComponents();
+    this._setListener();
   }
 
   _registerComponents() {
@@ -23,8 +23,8 @@ export default class Motion extends BaseComponent {
   }
 
   _setListener() {
-    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey,Contants.MOTION_UPDATE, this.update.bind(this));
-    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey,Contants.MOTION_REMOVE, this.remove.bind(this));
+    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey, Contants.MOTION_UPDATE, this.update.bind(this));
+    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey, Contants.MOTION_REMOVE, this.remove.bind(this));
   }
 
   create() {
@@ -33,23 +33,64 @@ export default class Motion extends BaseComponent {
 
   update() {
     this.positions = UnitLibrary.objectToArray(this.model.get(Contants.MOTION_DB_KEY));
-    return this.remove().render();
+    return this.render();
   }
 
   render() {
-    this.stage = this.masterStage.add.graphics(0, 0);
-    var graphics = new Phaser.Graphics(this.masterStage);
-    graphics.lineStyle(2, 0xFFFFFF, 1);
+    var pokerMask = new Phaser.Graphics(this.masterStage);
     if (this.positions.length > 0) {
-      this.positions.map((pos, index) => index == 0 ? graphics.moveTo(pos[0], pos[1]) : graphics.lineTo(pos[0], pos[1]));
-      graphics.lineTo(this.positions[0][0], this.positions[0][1]);
+      this.positions.map((pos, index) => index == 0 ? pokerMask.moveTo(pos[0], pos[1]) : pokerMask.lineTo(pos[0], pos[1]));
+      pokerMask.lineTo(this.positions[0][0], this.positions[0][1]);
     }
-    this.stage.addChild(graphics);
+    if (Object.keys(this.stage).length == 0) {
+      this.stage = this.masterStage.add.sprite(0, 0, Contants.MOTION_IMAGE);
+      this.stage.height = this.masterStage.height - (2 * this.masterStage.stagePadding);
+      this.stage.width = this.masterStage.width - (2 * this.masterStage.stagePadding);
+    }
+    Object.assign(this.stage, this.compute());
+    this.stage.anchor.setTo(this.stage.anchorX, this.stage.anchorY);
+    this.stage.mask = pokerMask;
     return this;
+  }
+
+  compute() {
+    var origin_direction = this.model.get(Contants.MOVE_ORIGIN);
+    var sprite = {};
+    switch (origin_direction) {
+      case Contants.ORIGIN_TOP_RIGHT:
+        if (this.positions.length <= 3) {
+          var [direction_top_right, direction_top_left, direction_bottom_right] = this.positions;
+        } else {
+          var [direction_top_right, direction_top_left, direction_bottom_left, direction_bottom_right] = this.positions;
+        }
+        sprite.x = direction_top_right[0];
+        sprite.y = direction_top_right[1];
+        sprite.anchorX = 1;
+        sprite.anchorY = 0;
+        sprite.angle = UnitLibrary.angleBetweenPoints(direction_top_right[0], direction_top_left[0], direction_top_right[1], direction_top_left[1]);
+
+        break;
+      case Contants.ORIGIN_BOTTOM_LEFT:
+        if (this.positions.length <= 3) {
+          var [direction_bottom_left, direction_bottom_right, direction_top_left] = this.positions;
+        } else {
+          var [ direction_bottom_left, direction_bottom_right, direction_top_right, direction_top_left] = this.positions;
+        }
+        sprite.x = direction_bottom_left[0];
+        sprite.y = direction_bottom_left[1];
+        sprite.anchorX = 0;
+        sprite.anchorY = 1;
+        sprite.angle = UnitLibrary.angleBetweenPoints(direction_bottom_right[0], direction_bottom_left[0], direction_bottom_right[1], direction_bottom_left[1]);
+
+        break;
+    }
+
+    return sprite;
   }
 
   remove() {
     this.masterStage.world.remove(this.stage);
+    this.stage = {};
     return this;
   }
 }

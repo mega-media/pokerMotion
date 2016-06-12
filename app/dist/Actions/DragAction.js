@@ -2,8 +2,10 @@
  * Created by arShown on 2016/6/7.
  */
 "use strict";
+import Model from '../Models/Model';
+import Contants from '../Contants/Contants';
 
-import DragAreaBR from './DragArea/BottomRright';
+import DragAreaBR from './DragArea/BottomRight';
 
 export default class DragAction {
   constructor(masterStage) {
@@ -12,12 +14,13 @@ export default class DragAction {
   }
 
   _registerComponents() {
-    this.masterStage.physics.startSystem(Phaser.Physics.P2JS);
+    this.model = new Model(this.masterStage.pokerPrimaryKey);
     this.motionAction = {};
     this.resetAction = {};
-
     this.dragArea = [];
     this.dragArea.push(new DragAreaBR(this.masterStage).getToggleArea());
+
+    this.masterStage.physics.startSystem(Phaser.Physics.P2JS);
     //Enable the physics bodies on all the sprites and turn on the visual debugger
     this.masterStage.physics.p2.enable(this.dragArea, true);
   }
@@ -37,12 +40,15 @@ export default class DragAction {
     //console.log("over");
   }
 
-  bindDragAreaMotion(pointer) {
+  bindDragAreaMotion(pointer)
+  {
+    if (typeof this.model.get(Contants.MOVE_AREA) != "undefined" && this.model.get(Contants.MOVE_AREA) == false) {
+      return false;
+    }
     var bodies = this.masterStage.physics.p2.hitTest(pointer.position, this.dragArea);
     if (bodies.length < 1) {
       return false;
     }
-    
     this.motionAction = bodies[0].parent.sprite.dragMotion;
     this.resetAction = bodies[0].parent.sprite.resetMotion;
     this.masterStage.input.addMoveCallback(this.motionAction);
@@ -54,6 +60,7 @@ export default class DragAction {
     }
     if (typeof this.motionAction == "function") {
       this.masterStage.input.deleteMoveCallback(this.motionAction);
+      this.motionAction = {};
     }
     this.resetAction.call(this, pointer);
     this.resetAction = {};

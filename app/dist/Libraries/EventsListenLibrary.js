@@ -14,6 +14,10 @@ var EventsListenLibrary = {
   dispatchEvent(key, eventName) {
     var event = new CustomEvent(eventName, {'detail': key});
     window.dispatchEvent(event);
+  },
+  removeListener(key,eventName)
+  {
+    
   }
 };
 export default EventsListenLibrary;

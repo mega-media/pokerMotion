@@ -8,6 +8,7 @@ import UnitLibrary from './Libraries/UnitLibrary';
 export default class Poker {
   constructor() {
     this.parent = "";
+    this.cardImg = null;
     this.width = 800;
     this.height = 1000;
     this.renderer = Phaser.CANVAS;
@@ -22,7 +23,7 @@ export default class Poker {
     this.phaserGame.pokerPrimaryKey = this.pokerKey;
     this.phaserGame.stagePadding = 100;
     /* 場景 */
-    this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame));
+    this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame,this.cardImg));
     this.phaserGame.state.start("loadStage");
   }
 

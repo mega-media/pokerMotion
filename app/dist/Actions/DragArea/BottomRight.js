@@ -5,6 +5,7 @@
 import Base from './Base';
 import Contants from '../../Contants/Contants';
 import UnitLibrary from '../../Libraries/UnitLibrary';
+import PointsLibrary from '../../Libraries/PointsLibrary';
 
 export default class BottomRight extends Base {
   constructor(masterStage) {
@@ -20,7 +21,6 @@ export default class BottomRight extends Base {
   }
 
   getToggleArea() {
-    //var areaSize = 50;
     var bmd = this.masterStage.add.bitmapData(this.areaSize, this.areaSize);
     var sprite = this.masterStage.add.sprite(
       this.originPointX - (this.areaSize / 2),
@@ -81,63 +81,74 @@ export default class BottomRight extends Base {
 
   renderComponent(pointX, pointY) {
     var padding = this.masterStage.stagePadding;
-    var {sizeLeft, sizeRight} = UnitLibrary.sizeBetweenPoints(pointX, this.originPointX, pointY, this.originPointY);
+    var {sizeLeft, sizeRight} = PointsLibrary.sizeBetweenPoints(pointX, this.originPointX, pointY, this.originPointY);
+    var unSlope = PointsLibrary.unSlopeBetweenPoints(this.originPointX, pointX, this.originPointY, pointY);
+
+    /**
+     * 取對稱點，再次過濾重複參數
+     * @method this.getMirrorPosition
+     */
+    var getMirrorPosition = function (x, y) {
+      return this.getMirrorPosition(unSlope, pointX, pointY, x, y)
+    }.bind(this);
+
+    /**
+     * 取兩線相交的點，再次過濾重複參數
+     * @method this.getIntersectPosition
+     */
+    var getIntersectPosition = function (a, b, c) 
+    {
+      return this.getIntersectPosition(unSlope, pointX, pointY, a, b, c);
+    }.bind(this);
 
     /*
      * 生成路徑
      */
-    if (sizeRight > this.originPointY) {
+    if (sizeRight > this.stageHeight) {
+      var {mirrorX, mirrorY} = getMirrorPosition(this.originPointX, padding);
       /*
        * 生成右四邊形路徑
        */
-      var an = parseFloat(sizeRight - this.originPointY);
-      var largerTrianSizeLeft = parseFloat(an / (sizeRight - (this.originPointY - pointY)) * (this.originPointX - pointX));
-      var smallTrianSizeLeft = parseFloat(an / sizeRight * sizeLeft);
-      var offsetPosY = parseFloat(Math.sqrt(Math.abs(Math.pow((this.originPointX - largerTrianSizeLeft) - pointX, 2) - Math.pow(this.originPointY, 2))) - pointY);
-
       /* 移動區元件 */
       /* 座標紀錄順序為逆時針 */
       this.model.set(Contants.MOTION_DB_KEY,
         [pointX, pointY],
-        [this.originPointX - sizeLeft, this.originPointY],
-        [this.originPointX - smallTrianSizeLeft, padding],
-        [this.originPointX - largerTrianSizeLeft, padding - offsetPosY]
+        getIntersectPosition(0, 1, this.originPointY),
+        getIntersectPosition(0, 1, padding),
+        [mirrorX, mirrorY]
       );
 
       /* 卡片元件 */
       this.model.set(Contants.CARD_DB_KEY,
         this.originCardPositions[0],
         this.originCardPositions[1],
-        [this.originPointX - sizeLeft, this.originPointY],
-        [this.originPointX - smallTrianSizeLeft, padding]
+        getIntersectPosition(0, 1, this.originPointY),
+        getIntersectPosition(0, 1, padding)
       );
 
       /* 呼叫繪製 */
       this.dispatchComponent();
       return this;
 
-    } else if (sizeLeft > this.originPointX) {
+    }
+    else if (sizeLeft > this.stageWidth) {
+      var {mirrorX, mirrorY} = getMirrorPosition(padding, this.originPointY);
       /*
        * 生成下四邊形路徑
        */
-      var an = parseFloat(sizeLeft - this.originPointX);
-      var largerTrianSizeRight = parseFloat(an / (sizeLeft - (this.originPointX - pointX)) * (this.originPointY - pointY));
-      var smallTrianSizeRight = parseFloat(an / sizeLeft * sizeRight);
-      var offsetPosX = parseFloat(Math.sqrt(Math.abs(Math.pow((this.originPointY - largerTrianSizeRight) - pointY, 2) - Math.pow(this.originPointX, 2))) - pointX);
-
       /* 移動區元件 */
       /* 座標紀錄順序為逆時針 */
       this.model.set(Contants.MOTION_DB_KEY,
         [pointX, pointY],
-        [padding - offsetPosX, this.originPointY - largerTrianSizeRight],
-        [padding, this.originPointY - smallTrianSizeRight],
-        [this.originPointX, this.originPointY - sizeRight]);
+        [mirrorX, mirrorY],
+        getIntersectPosition(1, 0, padding),
+        getIntersectPosition(1, 0, this.originPointX));
 
       /* 卡片元件 */
       this.model.set(Contants.CARD_DB_KEY,
         this.originCardPositions[0],
-        [padding, this.originPointY - smallTrianSizeRight],
-        [this.originPointX, this.originPointY - sizeRight],
+        getIntersectPosition(1, 0, padding),
+        getIntersectPosition(1, 0, this.originPointX),
         this.originCardPositions[3]
       );
 
@@ -146,27 +157,22 @@ export default class BottomRight extends Base {
       return this;
 
     } else {
-
       /*
        * 生成三角形路徑
        */
-      var offsetPosY = (this.originPointY - sizeRight) < padding ? padding : this.originPointY - sizeRight;
-      var offsetPosX = (this.originPointX - sizeLeft) < padding ? padding : this.originPointX - sizeLeft;
-
       /* 移動區元件 */
       /* 座標紀錄順序為逆時針 */
       this.model.set(Contants.MOTION_DB_KEY,
         [pointX, pointY],
-        [offsetPosX, this.originPointY],
-        [this.originPointX, offsetPosY]
+        getIntersectPosition(0, 1, this.originPointY),
+        getIntersectPosition(1, 0, this.originPointX)
       );
-
       /* 卡片元件 */
       this.model.set(Contants.CARD_DB_KEY,
         this.originCardPositions[0],
         this.originCardPositions[1],
-        [offsetPosX, this.originPointY],
-        [this.originPointX, offsetPosY],
+        getIntersectPosition(0, 1, this.originPointY),
+        getIntersectPosition(1, 0, this.originPointX),
         this.originCardPositions[3]
       );
 

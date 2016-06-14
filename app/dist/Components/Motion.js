@@ -7,6 +7,7 @@ import Model from '../Models/Model';
 import Contants from '../Contants/Contants';
 import EventsListenLibrary from '../Libraries/EventsListenLibrary';
 import UnitLibrary from '../Libraries/UnitLibrary';
+import PointsLibrary from '../Libraries/PointsLibrary';
 
 export default class Motion extends BaseComponent {
   constructor(masterStage) {
@@ -20,6 +21,7 @@ export default class Motion extends BaseComponent {
     this.positions = [];
     this.stage = {};
     this.model = new Model(this.masterStage.pokerPrimaryKey);
+
   }
 
   _setListener() {
@@ -44,8 +46,8 @@ export default class Motion extends BaseComponent {
     }
     if (Object.keys(this.stage).length == 0) {
       this.stage = this.masterStage.add.sprite(0, 0, Contants.MOTION_IMAGE);
-      this.stage.height = this.masterStage.height - (2 * this.masterStage.stagePadding);
       this.stage.width = this.masterStage.width - (2 * this.masterStage.stagePadding);
+      this.stage.height = this.masterStage.height - (2 * this.masterStage.stagePadding);
     }
     Object.assign(this.stage, this.compute());
     this.stage.anchor.setTo(this.stage.anchorX, this.stage.anchorY);
@@ -67,24 +69,21 @@ export default class Motion extends BaseComponent {
         sprite.y = direction_top_right[1];
         sprite.anchorX = 1;
         sprite.anchorY = 0;
-        sprite.angle = UnitLibrary.angleBetweenPoints(direction_top_right[0], direction_top_left[0], direction_top_right[1], direction_top_left[1]);
-
+        sprite.angle = PointsLibrary.angleBetweenPoints(direction_top_right[0], direction_top_left[0], direction_top_right[1], direction_top_left[1]);
         break;
       case Contants.ORIGIN_BOTTOM_LEFT:
         if (this.positions.length <= 3) {
           var [direction_bottom_left, direction_bottom_right, direction_top_left] = this.positions;
         } else {
-          var [ direction_bottom_left, direction_bottom_right, direction_top_right, direction_top_left] = this.positions;
+          var [direction_bottom_left, direction_bottom_right, direction_top_right, direction_top_left] = this.positions;
         }
         sprite.x = direction_bottom_left[0];
         sprite.y = direction_bottom_left[1];
         sprite.anchorX = 0;
         sprite.anchorY = 1;
-        sprite.angle = UnitLibrary.angleBetweenPoints(direction_bottom_right[0], direction_bottom_left[0], direction_bottom_right[1], direction_bottom_left[1]);
-
+        sprite.angle = PointsLibrary.angleBetweenPoints(direction_bottom_right[0], direction_bottom_left[0], direction_bottom_right[1], direction_bottom_left[1]);
         break;
     }
-
     return sprite;
   }
 

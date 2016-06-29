@@ -50,7 +50,7 @@ export default class BottomRight extends Base {
     /*
      * 放開時的座標
      */
-    var pointer = UnitLibrary.objectToArray(this.model.get(Contants.MOTION_DB_KEY))[0];
+    var pointer = this.model.get(Contants.MOTION_DB_KEY)[Contants.BOTTOM_LEFT];
     var [x,y] = pointer;
     var [startX,startY] = pointer;
 
@@ -96,90 +96,75 @@ export default class BottomRight extends Base {
      * 取兩線相交的點，再次過濾重複參數
      * @method this.getIntersectPosition
      */
-    var getIntersectPosition = function (a, b, c) 
-    {
+    var getIntersectPosition = function (a, b, c) {
       return this.getIntersectPosition(unSlope, pointX, pointY, a, b, c);
     }.bind(this);
 
     /*
      * 生成路徑
      */
+    const cardPositionData = {};
+    const positionData = {};
     if (sizeRight > this.stageHeight) {
       var {mirrorX, mirrorY} = getMirrorPosition(this.originPointX, padding);
       /*
        * 生成右四邊形路徑
        */
+
       /* 移動區元件 */
-      /* 座標紀錄順序為逆時針 */
-      this.model.set(Contants.MOTION_DB_KEY,
-        [pointX, pointY],
-        getIntersectPosition(0, 1, this.originPointY),
-        getIntersectPosition(0, 1, padding),
-        [mirrorX, mirrorY]
-      );
+      positionData[Contants.TOP_LEFT] = [mirrorX, mirrorY];
+      positionData[Contants.TOP_RIGHT] = getIntersectPosition(0, 1, padding);
+      positionData[Contants.BOTTOM_RIGHT] = getIntersectPosition(0, 1, this.originPointY);
+      positionData[Contants.BOTTOM_LEFT] = [pointX, pointY];
 
       /* 卡片元件 */
-      this.model.set(Contants.CARD_DB_KEY,
-        this.originCardPositions[0],
-        this.originCardPositions[1],
-        getIntersectPosition(0, 1, this.originPointY),
-        getIntersectPosition(0, 1, padding)
-      );
-
-      /* 呼叫繪製 */
-      this.dispatchComponent();
-      return this;
-
+      cardPositionData[Contants.TOP_LEFT] = this.originCardPositions[Contants.TOP_LEFT];
+      cardPositionData[Contants.TOP_RIGHT] = getIntersectPosition(0, 1, padding);
+      cardPositionData[Contants.BOTTOM_RIGHT] = getIntersectPosition(0, 1, this.originPointY);
+      cardPositionData[Contants.BOTTOM_LEFT] = this.originCardPositions[Contants.BOTTOM_LEFT];
     }
     else if (sizeLeft > this.stageWidth) {
       var {mirrorX, mirrorY} = getMirrorPosition(padding, this.originPointY);
       /*
        * 生成下四邊形路徑
        */
+
       /* 移動區元件 */
-      /* 座標紀錄順序為逆時針 */
-      this.model.set(Contants.MOTION_DB_KEY,
-        [pointX, pointY],
-        [mirrorX, mirrorY],
-        getIntersectPosition(1, 0, padding),
-        getIntersectPosition(1, 0, this.originPointX));
+      positionData[Contants.TOP_LEFT] = getIntersectPosition(1, 0, this.originPointX);
+      positionData[Contants.TOP_RIGHT] = getIntersectPosition(1, 0, padding);
+      positionData[Contants.BOTTOM_RIGHT] = [mirrorX, mirrorY];
+      positionData[Contants.BOTTOM_LEFT] = [pointX, pointY];
 
       /* 卡片元件 */
-      this.model.set(Contants.CARD_DB_KEY,
-        this.originCardPositions[0],
-        getIntersectPosition(1, 0, padding),
-        getIntersectPosition(1, 0, this.originPointX),
-        this.originCardPositions[3]
-      );
-
-      /* 呼叫繪製 */
-      this.dispatchComponent();
-      return this;
+      cardPositionData[Contants.TOP_LEFT] = this.originCardPositions[Contants.TOP_LEFT];
+      cardPositionData[Contants.TOP_RIGHT] = this.originCardPositions[Contants.TOP_RIGHT];
+      cardPositionData[Contants.BOTTOM_RIGHT] = getIntersectPosition(1, 0, this.originPointY);
+      cardPositionData[Contants.BOTTOM_LEFT] = getIntersectPosition(1, 0, padding);
 
     } else {
       /*
        * 生成三角形路徑
        */
+      //direction_bottom_left, direction_bottom_right, direction_top_right, direction_top_left
       /* 移動區元件 */
-      /* 座標紀錄順序為逆時針 */
-      this.model.set(Contants.MOTION_DB_KEY,
-        [pointX, pointY],
-        getIntersectPosition(0, 1, this.originPointY),
-        getIntersectPosition(1, 0, this.originPointX)
-      );
-      /* 卡片元件 */
-      this.model.set(Contants.CARD_DB_KEY,
-        this.originCardPositions[0],
-        this.originCardPositions[1],
-        getIntersectPosition(0, 1, this.originPointY),
-        getIntersectPosition(1, 0, this.originPointX),
-        this.originCardPositions[3]
-      );
+      positionData[Contants.TOP_LEFT] = getIntersectPosition(1, 0, this.originPointX);
+      positionData[Contants.BOTTOM_RIGHT] = getIntersectPosition(0, 1, this.originPointY);
+      positionData[Contants.BOTTOM_LEFT] = [pointX, pointY];
 
-      /* 呼叫繪製 */
-      this.dispatchComponent();
-      return this;
+      /* 卡片元件 */
+      cardPositionData[Contants.TOP_LEFT] = this.originCardPositions[Contants.TOP_LEFT];
+      cardPositionData[Contants.TOP_RIGHT] = this.originCardPositions[Contants.TOP_RIGHT];
+      cardPositionData[Contants.BOTTOM_RIGHT] = getIntersectPosition(0, 1, this.originPointY);
+      cardPositionData[Contants.BOTTOM_LEFT] = this.originCardPositions[Contants.BOTTOM_LEFT];
+      cardPositionData[Contants.ANOTHER_POS] = getIntersectPosition(1, 0, this.originPointX);
     }
+    /* 移動區元件 */
+    this.model.set(Contants.MOTION_DB_KEY,positionData);
+    /* 卡片元件 */
+    this.model.set(Contants.CARD_DB_KEY,cardPositionData);
+    /* 呼叫繪製 */
+    this.dispatchComponent();
+    return this;
   }
 
   dispatchComponent() {

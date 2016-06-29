@@ -18,7 +18,7 @@ export default class Base {
     this.intervalLimit = 200;
     this.areaName = "";
     this.model = new Model(this.masterStage.pokerPrimaryKey);
-    this.originCardPositions = UnitLibrary.objectToArray(this.model.get(Contants.CARD_DB_KEY));
+    this.originCardPositions = this.model.get(Contants.CARD_DB_KEY);
     this.stageWidth = this.masterStage.width - (2 * this.masterStage.stagePadding);
     this.stageHeight = this.masterStage.height - (2 * this.masterStage.stagePadding);
   }

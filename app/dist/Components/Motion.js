@@ -18,10 +18,9 @@ export default class Motion extends BaseComponent {
   }
 
   _registerComponents() {
-    this.positions = [];
+    this.positions = {};
     this.stage = {};
     this.model = new Model(this.masterStage.pokerPrimaryKey);
-
   }
 
   _setListener() {
@@ -34,16 +33,11 @@ export default class Motion extends BaseComponent {
   }
 
   update() {
-    this.positions = UnitLibrary.objectToArray(this.model.get(Contants.MOTION_DB_KEY));
+    this.positions = this.model.get(Contants.MOTION_DB_KEY);
     return this.render();
   }
 
   render() {
-    var pokerMask = new Phaser.Graphics(this.masterStage);
-    if (this.positions.length > 0) {
-      this.positions.map((pos, index) => index == 0 ? pokerMask.moveTo(pos[0], pos[1]) : pokerMask.lineTo(pos[0], pos[1]));
-      pokerMask.lineTo(this.positions[0][0], this.positions[0][1]);
-    }
     if (Object.keys(this.stage).length == 0) {
       this.stage = this.masterStage.add.sprite(0, 0, Contants.MOTION_IMAGE);
       this.stage.width = this.masterStage.width - (2 * this.masterStage.stagePadding);
@@ -51,37 +45,53 @@ export default class Motion extends BaseComponent {
     }
     Object.assign(this.stage, this.compute());
     this.stage.anchor.setTo(this.stage.anchorX, this.stage.anchorY);
+
+    var pokerMask = new Phaser.Graphics(this.masterStage);
+    if (Object.keys(this.positions).length > 0) {
+      let firstPos = [];
+      this.keySort.map(key => {
+        let pos = this.positions[key];
+        if (typeof pos === "undefined" || pos.length == 0) {
+          return;
+        }
+        if (firstPos.length == 0) {
+          firstPos = pos;
+          pokerMask.moveTo(pos[0], pos[1]);
+          return;
+        }
+        pokerMask.lineTo(pos[0], pos[1]);
+      });
+      pokerMask.lineTo(firstPos[0], firstPos[1]);
+    }
     this.stage.mask = pokerMask;
+    
     return this;
   }
 
   compute() {
     var origin_direction = this.model.get(Contants.MOVE_ORIGIN);
     var sprite = {};
+
     switch (origin_direction) {
       case Contants.ORIGIN_TOP_RIGHT:
-        if (this.positions.length <= 3) {
-          var [direction_top_right, direction_top_left, direction_bottom_right] = this.positions;
-        } else {
-          var [direction_top_right, direction_top_left, direction_bottom_left, direction_bottom_right] = this.positions;
-        }
-        sprite.x = direction_top_right[0];
-        sprite.y = direction_top_right[1];
-        sprite.anchorX = 1;
-        sprite.anchorY = 0;
-        sprite.angle = PointsLibrary.angleBetweenPoints(direction_top_right[0], direction_top_left[0], direction_top_right[1], direction_top_left[1]);
         break;
       case Contants.ORIGIN_BOTTOM_LEFT:
-        if (this.positions.length <= 3) {
-          var [direction_bottom_left, direction_bottom_right, direction_top_left] = this.positions;
-        } else {
-          var [direction_bottom_left, direction_bottom_right, direction_top_right, direction_top_left] = this.positions;
-        }
-        sprite.x = direction_bottom_left[0];
-        sprite.y = direction_bottom_left[1];
+        this.keySort = [
+          Contants.BOTTOM_LEFT,
+          Contants.BOTTOM_RIGHT,
+          Contants.TOP_RIGHT,
+          Contants.TOP_LEFT
+        ];
+        sprite.x = this.positions[Contants.BOTTOM_LEFT][0];
+        sprite.y = this.positions[Contants.BOTTOM_LEFT][1];
         sprite.anchorX = 0;
         sprite.anchorY = 1;
-        sprite.angle = PointsLibrary.angleBetweenPoints(direction_bottom_right[0], direction_bottom_left[0], direction_bottom_right[1], direction_bottom_left[1]);
+        sprite.angle = PointsLibrary.angleBetweenPoints(
+          this.positions[Contants.BOTTOM_RIGHT][0],
+          this.positions[Contants.BOTTOM_LEFT][0],
+          this.positions[Contants.BOTTOM_RIGHT][1],
+          this.positions[Contants.BOTTOM_LEFT][1]
+        );
         break;
     }
     return sprite;

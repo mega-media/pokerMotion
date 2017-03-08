@@ -1,34 +1,36 @@
 /**
  * Created by arShown on 2016/6/7.
+ * Updated on 2017/3/8.
  */
-"use strict";
-import MainStage from './Stages/MainStage';
-import UnitLibrary from './Libraries/UnitLibrary';
+import MainStage        from './Stages/MainStage';
+import StorageLibrary   from './Libraries/StorageLibrary';
 
 export default class Poker {
-  constructor() {
-    this.parent = "";
-    this.cardImg = null;
-    this.width = 800;
-    this.height = 1000;
-    this.renderer = Phaser.CANVAS;
-    this.phaserGame = {};
-    this.pokerKey = UnitLibrary.makePrimaryKey();
-  }
+    parentElementId:string;
+    cardImgFileName:string;
+    width:number;
+    height:number;
+    renderer:number;
+    phaserGame:Object;
 
-  start() {
-    console.log("================ Poker start! ================ ");
-    /* 建構主stage */
-    this.phaserGame = new Phaser.Game(this.width, this.height, this.renderer, this.parent);
-    this.phaserGame.pokerPrimaryKey = this.pokerKey;
-    this.phaserGame.stagePadding = 100;
-    /* 場景 */
-    this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame,this.cardImg));
-    this.phaserGame.state.start("loadStage");
-  }
+    constructor() {
+        this.renderer = Phaser.CANVAS;
+        this.phaserGame = {};
+    }
 
-  destroy() {
-    this.phaserGame.destroy();
-    console.log("================ Poker destory! ================ ");
-  }
+    start():void {
+        console.log("================ Poker start! ================ ");
+        /* 建構主stage */
+        this.phaserGame = new Phaser.Game(this.width, this.height, this.renderer, this.parentElementId);
+        this.phaserGame.store = new StorageLibrary();
+        this.phaserGame.padding = 100;
+        /* 場景 */
+        this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame, this.cardImgFileName));
+        this.phaserGame.state.start("loadStage");
+    }
+
+    destroy():void {
+        this.phaserGame.destroy();
+        console.log("================ Poker destory! ================ ");
+    }
 }

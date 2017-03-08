@@ -1,34 +1,46 @@
-var path = require('path');
-var webpack = require('webpack');
-var config = {
-  entry: [
-    'webpack-dev-server/client?http://localhost:8080',
-    'webpack/hot/dev-server',
-    path.resolve(__dirname, 'app/main.js')
-  ],
-  plugins: [
-    new webpack.NoErrorsPlugin()
-  ],
-  output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js'
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js[x]?$/,
-        loaders: ['babel'],
-        include: path.join(__dirname, 'app')
-      },
-      {
-        test: /\.css$/,
-        loaders: ['style', 'css?modules'],
-        include: path.join(__dirname, 'app')
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['', '.js', 'jsx', '.json']
-  }
+const path = require('path');
+const webpack = require('webpack');
+const WebpackNotifierPlugin = require('webpack-notifier');
+
+const phaserModule = path.join(__dirname, '/node_modules/phaser/');
+const phaser = path.join(phaserModule, 'build/custom/phaser-split.js'),
+    pixi = path.join(phaserModule, 'build/custom/pixi.js'),
+    p2 = path.join(phaserModule, 'build/custom/p2.js');
+
+const config = {
+    entry: [
+        'webpack-dev-server/client?http://localhost:8080',
+        'webpack/hot/dev-server',
+        path.resolve(__dirname, 'app/main.js')
+    ],
+    module: {
+        loaders: [
+            {
+                test: /phaser|pixi.js|p2/,
+                loader: 'script'
+            },
+            {
+                test: /\.js$/,
+                loaders: ['babel'],
+                include: path.join(__dirname, 'app')
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            'phaser': phaser,
+            'pixi.js': pixi,
+            'p2': p2,
+        },
+        extensions: ['', '.js']
+    },
+    plugins: [
+        new webpack.NoErrorsPlugin(),
+        new WebpackNotifierPlugin()
+    ],
+    output: {
+        path: path.resolve(__dirname, 'build'),
+        filename: 'bundle.js'
+    }
 };
 module.exports = config;

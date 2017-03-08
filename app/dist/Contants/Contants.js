@@ -27,6 +27,12 @@ var Contants = keyMirror({
   ORIGIN_TOP_RIGHT: null,
   ORIGIN_TOP_LEFT: null,
   ORIGIN_BOTTOM_RIGHT: null,
-  ORIGIN_BOTTOM_LEFT: null
+  ORIGIN_BOTTOM_LEFT: null,
+
+  TOP_RIGHT: null,
+  TOP_LEFT: null,
+  BOTTOM_RIGHT: null,
+  BOTTOM_LEFT: null,
+  ANOTHER_POS:null
 });
 export default Contants;

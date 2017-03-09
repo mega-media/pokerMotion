@@ -23,9 +23,22 @@ export default class Motion {
         this.selfStage = null;
     }
 
+    finish():void {
+        const {padding} = this.masterStage;
+        this.positions = {
+            TOP_LEFT: [padding, padding],
+            TOP_RIGHT: [this.masterStage.width - padding, padding],
+            BOTTOM_RIGHT: [this.masterStage.width - padding, this.masterStage.height - padding],
+            BOTTOM_LEFT: [padding, this.masterStage.height - padding],
+            ANOTHER_POS: []
+        };
+        this.render();
+    }
+
     restore():void {
         this.positions = {};
-        this.direction = null;
+        //this.masterStage.store.remove("motion");
+        this.remove();
     }
 
     update(TL:Array<number> = [], TR:Array<number> = [], BR:Array<number> = [], BL:Array<number> = [], AP:Array<number> = []):void {
@@ -77,11 +90,6 @@ export default class Motion {
         this.selfStage = Object.assign(this.selfStage, sprite);
         this.selfStage.mask = pokerMask;
         this.selfStage.anchor.setTo(this.selfStage.anchorX, this.selfStage.anchorY);
-
-        /* 紀錄點座標 */
-        this.masterStage.store.set("motion", {
-            positions: this.positions
-        });
     }
 
     compute():Array<string> {
@@ -100,5 +108,10 @@ export default class Motion {
                 break;
         }
         return keySort;
+    }
+
+    remove() {
+        this.masterStage.world.remove(this.selfStage);
+        this.selfStage = null;
     }
 }

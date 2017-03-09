@@ -11,7 +11,7 @@ export default class DragAction {
     card:Card;
     motion:Motion;
     motionAction:?() => any;
-    resetAction:?() => any;
+    resetMotion:?() => any;
     dragArea:Array<any>;
 
     constructor(masterStage:Object, card:Card, motion:Motion) {
@@ -19,50 +19,65 @@ export default class DragAction {
         this.card = card;
         this.motion = motion;
         this.motionAction = null;
-        this.resetAction = null;
+        this.resetMotion = null;
         this.dragArea = [];
         this._registerComponents();
     }
 
-    _registerComponents() {
+    _registerComponents():void {
         this.dragArea.push(new DragAreaBR(this.masterStage, this.card, this.motion).getTriggerArea());
         this.masterStage.physics.startSystem(Phaser.Physics.P2JS);
-        //Enable the physics bodies on all the sprites and turn on the visual debugger
         this.masterStage.physics.p2.enable(this.dragArea, true);
     }
 
-    startDragMotion() {
+    startDragMotion():void {
         this.masterStage.input.onDown.add(this.bindDragAreaMotion, this);
         this.masterStage.input.onUp.add(this.unbindDragAreaMotion, this);
-        this.masterStage.input.addMoveCallback(this.hoverDragAreaMotion, this);
+        //this.masterStage.input.addMoveCallback(this.hoverDragAreaMotion, this);
+        this.masterStage.dragStartCallback("waiting");
+    }
+
+    finishDragMotion():void {
+        this.card.remove();
+        this.motion.finish();
+        this.masterStage.input.deleteMoveCallback(this.motionAction);
+        this.masterStage.input.deleteMoveCallback(this.resetMotion);
+        this.masterStage.input.onDown.remove(this.bindDragAreaMotion, this);
+        this.masterStage.input.onUp.remove(this.unbindDragAreaMotion, this);
+        this.motionAction = null;
+        this.resetMotion = null;
+        this.masterStage.dragFinishCallback("opened");
     }
 
     hoverDragAreaMotion(pointer:Object):void {
-        var bodies = this.masterStage.physics.p2.hitTest(pointer.position, this.dragArea);
-        /*
-        if (bodies.length < 1)
-            console.log("out");
-        else
-            console.log("over");*/
+        /* 觸發區 hover
+         var bodies = this.masterStage.physics.p2.hitTest(pointer.position, this.dragArea);
+
+         if (bodies.length < 1)
+         console.log("out");
+         else
+         console.log("over");*/
     }
 
     bindDragAreaMotion(pointer:Object):void {
         var bodies = this.masterStage.physics.p2.hitTest(pointer.position, this.dragArea);
         if (bodies.length) {
             this.motionAction = bodies[0].parent.sprite.dragMotion;
-            this.resetAction = bodies[0].parent.sprite.resetMotion;
+            this.resetMotion = bodies[0].parent.sprite.resetMotion;
             this.masterStage.input.addMoveCallback(this.motionAction);
+            this.masterStage.dragStartCallback("drag", pointer.x, pointer.y);
         }
     }
 
     unbindDragAreaMotion(pointer:Object):void {
-        if (typeof this.resetAction === "function") {
+        if (typeof this.resetMotion === "function") {
             if (typeof this.motionAction == "function") {
                 this.masterStage.input.deleteMoveCallback(this.motionAction);
                 this.motionAction = null;
             }
-            this.resetAction.call(this, pointer);
-            this.resetAction = null;
+            this.resetMotion(pointer);
+            this.masterStage.input.deleteMoveCallback(this.resetMotion);
+            this.resetMotion = null;
         }
     }
 }

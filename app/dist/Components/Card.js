@@ -100,9 +100,10 @@ export default class Card {
             /* 寫入遮罩 */
             stage.mask = pokerMask;
         }
-        /* 紀錄卡牌點座標 */
-        this.masterStage.store.set("card", {
-            positions: this.positions
-        });
+    }
+
+    remove(){
+        this.masterStage.world.remove(this.selfStage);
+        this.selfStage = null;
     }
 }

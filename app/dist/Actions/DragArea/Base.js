@@ -15,8 +15,6 @@ export default class Base {
     masterStage:Object;
     card:Card;
     motion:Motion;
-    areaSize:number;
-    intervalLimit:number;
     interval:?number;
     motionFlag:boolean;
 
@@ -24,32 +22,93 @@ export default class Base {
         this.masterStage = masterStage;
         this.card = card;
         this.motion = motion;
-        this.areaSize = 100;
-        this.intervalLimit = 200;
         this.interval = null;
         this.motionFlag = true;
     }
 
-    getMovePermission():boolean {
-        return this.motionFlag;
+    /**
+     * 檢查是不是符合開牌範圍
+     */
+    isTimeToOpen(pointer:Object):boolean {
+        return false;
     }
 
-    setMovePermission(flag:boolean):void {
-        this.motionFlag = flag;
+    /**
+     * 拖曳動作
+     * @param pointer
+     * @returns {null}
+     */
+    dragMotion(pointer:Object):?void {
+        return null;
     }
 
+    /**
+     * 自動開牌
+     */
+    openMotion(pointer:Object):?void {
+        this.masterStage.dragFinishCallback("opened", pointer.x, pointer.y);
+    }
+
+    /**
+     * 放開時回原狀
+     * @returns {null}
+     */
+    resetMotion(pointer:Object):?void {
+        this.masterStage.dragFinishCallback("waiting", pointer.x, pointer.y);
+    }
+
+    /**
+     * 渲染
+     * @param pointX
+     * @param pointY
+     */
+    render(pointX:number, pointY:number):void {
+    }
+
+    /**
+     * 綁定interval
+     * @param handler
+     */
     bindInterval(handler:() => any):void {
         this.interval = setInterval(handler, 1);
     }
 
-    finishInterval():void {
+    /**
+     * 觸發區塊
+     * @returns {*}
+     */
+    getTriggerArea(bmdW:number, bmdH:number, bmdX:number, bmdY:number):Object {
+        const bmd = this.masterStage.add.bitmapData(bmdW, bmdH);
+        const sprite = this.masterStage.add.sprite(bmdX, bmdY, bmd);
+        sprite.dragMotion = this.dragMotion.bind(this);
+        sprite.resetMotion = this.resetMotion.bind(this);
+        return sprite;
+    }
+
+    /**
+     * 操作結束，初始化元件
+     */
+    restoreInterval():void {
         if (this.interval)
             clearInterval(this.interval);
 
         this.card.restore();
-        //this.motion.restore();
-        this.setMovePermission(true);
+        this.motion.restore();
+        this.motionFlag = true;
     }
+
+    /**
+     * 操作結束，開牌
+     */
+    finishInterval():void {
+        if (this.interval)
+            clearInterval(this.interval);
+
+        this.card.remove();
+        this.motion.finish();
+        this.motionFlag = false;
+    }
+
 
     /**
      * 取得對稱點，過濾重複使用的參數

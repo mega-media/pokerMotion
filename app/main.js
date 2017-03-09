@@ -22,12 +22,37 @@ window.onload = function () {
     game.parentElementId = "container";
     game.width = 640;
     game.height = 800;
-    game.start();
     /*
-    var game2 = new Poker();
-    game2.cardImgFileName = "poker2.png";
-    game2.parentElementId = "container2";
-    game2.width = 640;
-    game2.height = 800;
-    game2.start();*/
+     var game2 = new Poker();
+     game2.cardImgFileName = "poker2.png";
+     game2.parentElementId = "container2";
+     game2.width = 640;
+     game2.height = 800;
+     game2.start();*/
+    const openEle = document.getElementById("open");
+    openEle && openEle.addEventListener('click', game.finish.bind(game));
+    const resetEle = document.getElementById("reset");
+    resetEle && resetEle.addEventListener('click', () => {
+        game.destroy();
+        game.start();
+    });
+    const msgEle:any = document.getElementById("msg");
+    let from = "", to = "", status = "";
+    const setMeg = () => {
+        msgEle && (msgEle.innerHTML = `狀態：${status} ${from ? ', from : ' + from : ''} ${to ? '; to : ' + to : ''}`);
+    }
+    game.dragStartCallback = (s:string, x?:number, y?:number) => {
+        status = s;
+        x && y ? (from = `${parseInt(x)},${parseInt(y)}`) : from = '';
+        to = '';
+        setMeg();
+    };
+    game.dragFinishCallback = (s:string, x?:number, y?:number) => {
+        status = s;
+        x && y ? (to = `${parseInt(x)},${parseInt(y)}`) : to = '';
+        setMeg();
+    };
+
+    /* 開始 */
+    game.start();
 };

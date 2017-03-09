@@ -11,7 +11,11 @@ export default class Poker {
     width:number;
     height:number;
     renderer:number;
+    /* stage */
     phaserGame:Object;
+    /* callback */
+    dragStartCallback:(status:string, x?:number, y?:number) => any;
+    dragFinishCallback:(status:string, x?:number, y?:number) => any;
 
     constructor() {
         this.renderer = Phaser.CANVAS;
@@ -24,13 +28,26 @@ export default class Poker {
         this.phaserGame = new Phaser.Game(this.width, this.height, this.renderer, this.parentElementId);
         this.phaserGame.store = new StorageLibrary();
         this.phaserGame.padding = 100;
+        this.phaserGame.dragStartCallback = this.dragStartCallback;
+        this.phaserGame.dragFinishCallback = this.dragFinishCallback;
         /* 場景 */
         this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame, this.cardImgFileName));
         this.phaserGame.state.start("loadStage");
     }
 
+    finish():boolean {
+        console.log("================ Poker finish! ================ ");
+        if (this.phaserGame && this.phaserGame.finish) {
+            this.phaserGame.finish();
+        } else {
+            console.log("stage 尚未準備就緒");
+            return false;
+        }
+        return true;
+    }
+
     destroy():void {
         this.phaserGame.destroy();
-        console.log("================ Poker destory! ================ ");
+        console.log("================ Poker destroy! ================ ");
     }
 }

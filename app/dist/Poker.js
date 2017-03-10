@@ -10,25 +10,34 @@ export default class Poker {
     cardImgFileName:string;
     width:number;
     height:number;
+    padding:number;
     renderer:number;
     /* stage */
     phaserGame:Object;
-    /* callback */
-    dragStartCallback:(status:string, x?:number, y?:number) => any;
-    dragFinishCallback:(status:string, x?:number, y?:number) => any;
+    /* status callback */
+    dragPendingCallback:() => any;
+    dragStartCallback:(x:number, y:number) => any;
+    dragStopCallback:(x:number, y:number) => any;
+    dragFinishCallback:() => any;
 
     constructor() {
         this.renderer = Phaser.CANVAS;
         this.phaserGame = {};
+        this.parentElementId = "";
+        this.cardImgFileName = "";
+        this.width = this.height = this.padding = 0;
+        this.dragPendingCallback = this.dragStartCallback = this.dragStopCallback = this.dragFinishCallback = () => {
+        };
     }
 
     start():void {
         console.log("================ Poker start! ================ ");
         /* 建構主stage */
         this.phaserGame = new Phaser.Game(this.width, this.height, this.renderer, this.parentElementId);
-        this.phaserGame.store = new StorageLibrary();
-        this.phaserGame.padding = 100;
+        this.phaserGame.padding = this.padding;
+        this.phaserGame.dragPendingCallback = this.dragPendingCallback;
         this.phaserGame.dragStartCallback = this.dragStartCallback;
+        this.phaserGame.dragStopCallback = this.dragStopCallback;
         this.phaserGame.dragFinishCallback = this.dragFinishCallback;
         /* 場景 */
         this.phaserGame.state.add("loadStage", new MainStage(this.phaserGame, this.cardImgFileName));

@@ -37,7 +37,6 @@ export default class Motion {
 
     restore():void {
         this.positions = {};
-        //this.masterStage.store.remove("motion");
         this.remove();
     }
 

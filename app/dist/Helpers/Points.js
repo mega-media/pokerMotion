@@ -29,7 +29,7 @@ export function slopeBetweenPoints(x1:number, x2:number, y1:number, y2:number):n
  * @returns {number}
  */
 export function unSlopeBetweenPoints(x1:number, x2:number, y1:number, y2:number):number {
-    return zeroThrow(x2 - x1, y2 - y1) * -1;
+    return zeroThrow(-1, slopeBetweenPoints(x1, x2, y1, y2));
 }
 
 /**
@@ -41,8 +41,8 @@ export function unSlopeBetweenPoints(x1:number, x2:number, y1:number, y2:number)
  * @returns {{x: Number, y: Number}}
  */
 export function middleBetweenPoints(x1:number, x2:number, y1:number, y2:number):{x: number, y: number} {
-    var x = zeroThrow((x1 + x2), 2);
-    var y = zeroThrow((y1 + y2), 2);
+    const x = zeroThrow((x1 + x2), 2);
+    const y = zeroThrow((y1 + y2), 2);
     return {x, y};
 }
 
@@ -55,11 +55,11 @@ export function middleBetweenPoints(x1:number, x2:number, y1:number, y2:number):
  * @returns {{sizeLeft: Number, sizeRight: Number}}
  */
 export function sizeBetweenPoints(x1:number, x2:number, y1:number, y2:number):{sizeLeft: number, sizeRight: number} {
-    var mK = Math.abs(parseFloat(x2 - x1));
-    var mL = Math.abs(parseFloat(y2 - y1));
-    var temp = parseFloat(Math.pow(mL, 2) + Math.pow(mK, 2));
-    var sizeLeft = zeroThrow(temp, (2 * mK));
-    var sizeRight = zeroThrow(temp, (2 * mL));
+    const mK = Math.abs(parseFloat(x2 - x1));
+    const mL = Math.abs(parseFloat(y2 - y1));
+    const temp = parseFloat(Math.pow(mL, 2) + Math.pow(mK, 2));
+    const sizeLeft = zeroThrow(temp, (2 * mK));
+    const sizeRight = zeroThrow(temp, (2 * mL));
     return {sizeLeft, sizeRight};
 }
 
@@ -89,6 +89,7 @@ export function angleBetweenPoints(x1:number, x2:number, y1:number, y2:number):n
 /**
  * 兩線相交的座標
  * https://www.ptt.cc/bbs/Flash/M.1201264066.A.40B.html
+ * 直線方程式 ： ax + by = c
  * @param a1
  * @param b1
  * @param c1
@@ -102,33 +103,28 @@ export function getIntersectPosition(a1:number, b1:number, c1:number, a2:number,
 }
 
 /**
- * 由兩點取得直線方程式
+ * 兩點座標，回傳對稱點座標函式
+ * http://sites.ccvs.kh.edu.tw/fuchi/doc/26261
  * @param x1
  * @param x2
  * @param y1
  * @param y2
- * @returns {Function}
+ * @returns {Function:(x,y)=>{mirrorX: number, mirrorY: number}}
+ * newX = x - 2 * a * (ax + by + c) / (a^2 + b^2);
+ * newY = y - 2 * b * (ax + by + c) / (a^2 + b^2);
  */
-export function theVerticalLineFuc(x1:number, x2:number, y1:number, y2:number):(x:number, y:number) => number {
-    var middlePoint = middleBetweenPoints(x1, x2, y1, y2);
-    var unSlope = unSlopeBetweenPoints(x1, x2, y1, y2);
-    return function (x, y) {
-        return zeroThrow((unSlope * x - y + ( middlePoint.y - unSlope * middlePoint.x)), parseFloat(Math.pow(unSlope, 2) + Math.pow(-1, 2)));
-    };
-}
+export function getMirrorPosition(x1:number, x2:number, y1:number, y2:number):(x:number, y:number) => {mirrorX: number, mirrorY: number} {
+    const middlePoint = middleBetweenPoints(x1, x2, y1, y2);
+    const unSlope = unSlopeBetweenPoints(x1, x2, y1, y2);
 
-/**
- * 取得目標座標的對稱點座標
- * http://sites.ccvs.kh.edu.tw/fuchi/doc/26261
- * @param x 目標座標.x
- * @param y 目標座標.y
- * @param unSlope 斜率
- * @param Fuc 直線方程式
- * @returns {{mirrorX: number, mirrorY: number}}
- */
-export function getMirrorPosition(x:number, y:number, unSlope:number, Fuc:(x:number, y:number)=>number):{mirrorX: number, mirrorY: number} {
-    var mirrorX = x - 2 * unSlope * Fuc(x, y);
-    var mirrorY = y - 2 * -1 * Fuc(x, y);
-    return {mirrorX, mirrorY};
+    /* 對稱線的直線方程式 */
+    const c = middlePoint.y - unSlope * middlePoint.x;
+
+    return function (x, y) {
+        const Func = (x, y) => zeroThrow((unSlope * x - y + c), parseFloat(Math.pow(unSlope, 2) + Math.pow(-1, 2)));
+        const mirrorX = x - 2 * unSlope * Func(x, y);
+        const mirrorY = y - 2 * -1 * Func(x, y);
+        return {mirrorX, mirrorY};
+    }
 }
 

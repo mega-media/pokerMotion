@@ -7,7 +7,6 @@ import Motion       from '../../Components/Motion';
 import {
     middleBetweenPoints,
     getIntersectPosition,
-    theVerticalLineFuc,
     getMirrorPosition
 } from '../../Helpers/Points';
 
@@ -46,7 +45,7 @@ export default class Base {
      * 自動開牌
      */
     openMotion(pointer:Object):?void {
-        this.masterStage.dragFinishCallback("opened", pointer.x, pointer.y);
+        this.masterStage.dragStopCallback(pointer.x, pointer.y);
     }
 
     /**
@@ -54,7 +53,7 @@ export default class Base {
      * @returns {null}
      */
     resetMotion(pointer:Object):?void {
-        this.masterStage.dragFinishCallback("waiting", pointer.x, pointer.y);
+        this.masterStage.dragStopCallback(pointer.x, pointer.y);
     }
 
     /**
@@ -95,6 +94,8 @@ export default class Base {
         this.card.restore();
         this.motion.restore();
         this.motionFlag = true;
+        /* callback */
+        this.masterStage.dragPendingCallback();
     }
 
     /**
@@ -107,37 +108,21 @@ export default class Base {
         this.card.remove();
         this.motion.finish();
         this.motionFlag = false;
+        /* callback */
+        this.masterStage.dragFinishCallback();
     }
-
-
-    /**
-     * 取得對稱點，過濾重複使用的參數
-     * @param unSlope 斜率
-     * @param pointX 滑鼠座標
-     * @param pointY 滑鼠座標
-     * @param x
-     * @param y
-     * @returns {mirrorX: number, mirrorY: number}
-     */
-    getVerticalLineAndMirrorPosition(unSlope:number, pointX:number, pointY:number, x:number, y:number):{mirrorX: number, mirrorY: number} {
-        const {width, height, padding} = this.masterStage;
-        var LineFuc = theVerticalLineFuc(width - padding, pointX, height - padding, pointY);
-        return getMirrorPosition(x, y, unSlope, LineFuc);
-    }
-
+    
     /**
      * 兩線相交的點，過濾重複使用的參數
      * @param unSlope 斜率
-     * @param pointX 滑鼠座標
-     * @param pointY 滑鼠座標
+     * @param middlePointX 中點座標.x
+     * @param middlePointY 中點座標.y
      * @param a
      * @param b
      * @param c
-     * @returns {point[x,y]}
+     * @returns {Array.<number>}
      */
-    getMiddleBetweenAndIntersectPosition(unSlope:number, pointX:number, pointY:number, a:number, b:number, c:number):Array<number> {
-        const {width, height, padding} = this.masterStage;
-        var middlePoint = middleBetweenPoints(width - padding, pointX, height - padding, pointY);
-        return getIntersectPosition(unSlope, -1, unSlope * middlePoint.x - middlePoint.y, a, b, c);
+    getMiddleBetweenAndIntersectPosition(unSlope:number, middlePointX:number, middlePointY:number, a:number, b:number, c:number):Array<number> {
+        return getIntersectPosition(unSlope, -1, unSlope * middlePointX - middlePointY, a, b, c);
     }
 }

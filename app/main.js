@@ -20,15 +20,9 @@ window.onload = function () {
      */
     game.cardImgFileName = "poker1.png";
     game.parentElementId = "container";
-    game.width = 640;
-    game.height = 800;
-    /*
-     var game2 = new Poker();
-     game2.cardImgFileName = "poker2.png";
-     game2.parentElementId = "container2";
-     game2.width = 640;
-     game2.height = 800;
-     game2.start();*/
+    game.width = 400;
+    game.height = 500;
+    game.padding = 50;
     const openEle = document.getElementById("open");
     openEle && openEle.addEventListener('click', game.finish.bind(game));
     const resetEle = document.getElementById("reset");
@@ -41,18 +35,33 @@ window.onload = function () {
     const setMeg = () => {
         msgEle && (msgEle.innerHTML = `狀態：${status} ${from ? ', from : ' + from : ''} ${to ? '; to : ' + to : ''}`);
     }
-    game.dragStartCallback = (s:string, x?:number, y?:number) => {
-        status = s;
-        x && y ? (from = `${parseInt(x)},${parseInt(y)}`) : from = '';
-        to = '';
+    game.dragPendingCallback = () => {
+        status = "Pending";
+        from = to = '';
         setMeg();
     };
-    game.dragFinishCallback = (s:string, x?:number, y?:number) => {
-        status = s;
-        x && y ? (to = `${parseInt(x)},${parseInt(y)}`) : to = '';
+    game.dragStartCallback = (x:number, y:number) => {
+        status = "Start";
+        from = `${parseInt(x)},${parseInt(y)}`;
         setMeg();
     };
-
+    game.dragStopCallback = (x:number, y:number) => {
+        status = "Stop";
+        to = `${parseInt(x)},${parseInt(y)}`;
+        setMeg();
+    };
+    game.dragFinishCallback = () => {
+        status = "Finish";
+        setMeg();
+    };
     /* 開始 */
     game.start();
+
+    /*
+     var game2 = new Poker();
+     game2.cardImgFileName = "poker2.png";
+     game2.parentElementId = "container2";
+     game2.width = 640;
+     game2.height = 800;
+     game2.start();*/
 };

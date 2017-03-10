@@ -2,7 +2,15 @@
  * Created by arShown on 2016/6/7.
  * Updated on 2017/3/8
  */
-import {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, ANOTHER_POS, MOTION_IMAGE}  from '../Constants/Constants';
+import {
+    RIGHT,
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_RIGHT,
+    BOTTOM_LEFT,
+    ANOTHER_POS,
+    MOTION_IMAGE
+}  from '../Constants/Constants';
 import StorageLibrary                                                               from '../Libraries/StorageLibrary';
 import {angleBetweenPoints}                                                         from '../Helpers/Points';
 
@@ -13,7 +21,7 @@ export default class Motion {
         [key:string]:Array<number>
     };
     selfStage:?Object;
-    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT");
+    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT" | "RIGHT");
 
     constructor(masterStage:Object) {
         this.masterStage = masterStage;
@@ -97,13 +105,16 @@ export default class Motion {
             case TOP_RIGHT:
                 break;
             case BOTTOM_RIGHT:
-            default:
+            case RIGHT:
                 keySort = [
                     BOTTOM_LEFT,
                     BOTTOM_RIGHT,
                     TOP_RIGHT,
                     TOP_LEFT
                 ];
+                break;
+            default:
+                keySort = [];
                 break;
         }
         return keySort;

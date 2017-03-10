@@ -26,9 +26,8 @@ export default class BottomRight extends Base {
 
     constructor(masterStage:Object, card:Card, motion:Motion) {
         super(masterStage, card, motion);
-        this.motion.direction = this.card.direction = BOTTOM_RIGHT;
 
-        /* 基準點：右下角 */
+        /* 基準點：右下 */
         const {width, height, padding} = masterStage;
         this.originPosition = [width - padding, height - padding];
     }
@@ -49,7 +48,7 @@ export default class BottomRight extends Base {
      * 檢查是不是符合開牌範圍
      */
     isTimeToOpen(pointer:Object):boolean {
-        const {width, height, padding} = this.masterStage;
+        const {width, height} = this.masterStage;
         return pointer.x <= (width / 3) || pointer.y <= (height / 3);
     }
 
@@ -184,6 +183,7 @@ export default class BottomRight extends Base {
      * @param pointY
      */
     render(pointX:number, pointY:number):void {
+        this.motion.direction = this.card.direction = BOTTOM_RIGHT;
         const [originX, originY] = this.originPosition;
         const {width, height, padding} = this.masterStage;
 

@@ -9,7 +9,12 @@ const CARD_IMAGE = "CARD_IMAGE",
     TOP_LEFT = "TOP_LEFT",
     BOTTOM_RIGHT = "BOTTOM_RIGHT",
     BOTTOM_LEFT = "BOTTOM_LEFT",
-    ANOTHER_POS = "ANOTHER_POS";
+    ANOTHER_POS = "ANOTHER_POS",
+    TOP = "TOP",
+    BOTTOM = "BOTTOM", 
+    LEFT = "LEFT", 
+    RIGHT = "RIGHT";
+
 
 export {
     CARD_IMAGE,
@@ -18,5 +23,9 @@ export {
     TOP_LEFT,
     BOTTOM_RIGHT,
     BOTTOM_LEFT,
-    ANOTHER_POS
+    ANOTHER_POS,
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
 };

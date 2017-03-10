@@ -2,14 +2,14 @@
  * Created by arShown on 2016/6/7.
  * Updated on 2017/3/8.
  */
-import {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, ANOTHER_POS, CARD_IMAGE} from '../Constants/Constants';
+import {RIGHT, TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, ANOTHER_POS, CARD_IMAGE} from '../Constants/Constants';
 
 export default class Card {
     masterStage:Object;
     positions:{
         [key:string]:Array<number>
     };
-    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT");
+    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT" | "RIGHT");
     selfStage:?Object;
 
     constructor(masterStage:Object) {
@@ -102,7 +102,7 @@ export default class Card {
         }
     }
 
-    remove(){
+    remove() {
         this.masterStage.world.remove(this.selfStage);
         this.selfStage = null;
     }

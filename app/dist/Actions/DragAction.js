@@ -2,9 +2,11 @@
  * Created by arShown on 2016/6/7.
  * Updated on 2017/3/8.
  */
-import Card                                                          from '../Components/Card';
-import Motion                                                        from '../Components/Motion';
-import DragAreaBR                                                    from './DragArea/BottomRight';
+import Card         from '../Components/Card';
+import Motion       from '../Components/Motion';
+import BottomRight  from './DragArea/BottomRight';
+import Right        from './DragArea/Right';
+import TopRight     from './DragArea/TopRight';
 
 export default class DragAction {
     masterStage:Object;
@@ -26,9 +28,21 @@ export default class DragAction {
 
     /* 寫入所有觸發區 */
     _registerComponents():void {
-        this.dragArea.push(new DragAreaBR(this.masterStage, this.card, this.motion).getTriggerArea());
+        this.dragArea.push(
+            new BottomRight(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new Right(this.masterStage, this.card, this.motion).getTriggerArea(),
+            //new TopRight(this.masterStage, this.card, this.motion).getTriggerArea()
+        );
+
         this.masterStage.physics.startSystem(Phaser.Physics.P2JS);
+        this.masterStage.physics.p2.setImpactEvents(true);
         this.masterStage.physics.p2.enable(this.dragArea, true);
+
+        /* 解除碰撞事件 */
+        this.dragArea.map(sprite => {
+            sprite.body.collides({}, () => {
+            }, this);
+        });
     }
 
     /**

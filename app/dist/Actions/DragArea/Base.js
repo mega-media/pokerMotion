@@ -16,7 +16,7 @@ export default class Base {
     motion:Motion;
     interval:?number;
     motionFlag:boolean;
-
+    
     constructor(masterStage:Object, card:Card, motion:Motion) {
         this.masterStage = masterStage;
         this.card = card;

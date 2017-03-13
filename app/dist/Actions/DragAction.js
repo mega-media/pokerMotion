@@ -34,22 +34,26 @@ export default class DragAction {
     /* 寫入所有觸發區 */
     _registerComponents():void {
         this.dragArea.push(
-            new Top(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new Right(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new Bottom(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new Left(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new TopRight(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new TopLeft(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new BottomRight(this.masterStage, this.card, this.motion).getTriggerArea(),
-            new BottomLeft(this.masterStage, this.card, this.motion).getTriggerArea()
+            new Top(this.masterStage, this.card, this.motion),
+            new Right(this.masterStage, this.card, this.motion),
+            new Bottom(this.masterStage, this.card, this.motion),
+            new Left(this.masterStage, this.card, this.motion),
+            new TopRight(this.masterStage, this.card, this.motion),
+            new TopLeft(this.masterStage, this.card, this.motion),
+            new BottomRight(this.masterStage, this.card, this.motion),
+            new BottomLeft(this.masterStage, this.card, this.motion)
         );
-
+        this.dragArea = this.dragArea.map(area => {
+            /* 綁定開牌後行為 */
+            area.finishCallback = this.finishDragMotion.bind(this);
+            return area.getTriggerArea();
+        });
         this.masterStage.physics.startSystem(Phaser.Physics.P2JS);
         this.masterStage.physics.p2.setImpactEvents(true);
         this.masterStage.physics.p2.enable(this.dragArea);
 
         /* 解除碰撞事件 */
-        this.dragArea.map(sprite => {
+        this.dragArea.forEach(sprite => {
             sprite.body.collides({}, () => {
             }, this);
         });
@@ -72,10 +76,11 @@ export default class DragAction {
     finishDragMotion():void {
         this.card.remove();
         this.motion.finish();
-        this.masterStage.input.deleteMoveCallback(this.motionAction);
-        this.masterStage.input.deleteMoveCallback(this.resetMotion);
-        this.masterStage.input.onDown.remove(this.bindDragAreaMotion, this);
-        this.masterStage.input.onUp.remove(this.unbindDragAreaMotion, this);
+        this.masterStage.input.deleteMoveCallback(this.motionAction, this);
+        this.masterStage.input.deleteMoveCallback(this.resetMotion, this);
+        this.masterStage.input.deleteMoveCallback(this.hoverDragAreaMotion, this);
+        this.masterStage.input.onDown.removeAll();
+        this.masterStage.input.onUp.removeAll();
         this.motionAction = null;
         this.resetMotion = null;
         /* callback */
@@ -103,7 +108,7 @@ export default class DragAction {
         if (bodies.length) {
             this.motionAction = bodies[0].parent.sprite.dragMotion;
             this.resetMotion = bodies[0].parent.sprite.resetMotion;
-            this.masterStage.input.addMoveCallback(this.motionAction);
+            this.masterStage.input.addMoveCallback(this.motionAction, this);
             this.masterStage.dragStartCallback(pointer.x, pointer.y);
         }
     }
@@ -115,11 +120,11 @@ export default class DragAction {
     unbindDragAreaMotion(pointer:Object):void {
         if (typeof this.resetMotion === "function") {
             if (typeof this.motionAction == "function") {
-                this.masterStage.input.deleteMoveCallback(this.motionAction);
+                this.masterStage.input.deleteMoveCallback(this.motionAction, this);
                 this.motionAction = null;
             }
             this.resetMotion(pointer);
-            this.masterStage.input.deleteMoveCallback(this.resetMotion);
+            this.masterStage.input.deleteMoveCallback(this.resetMotion, this);
             this.resetMotion = null;
         }
     }

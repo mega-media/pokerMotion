@@ -31,9 +31,10 @@ export default class Poker {
     }
 
     start():void {
-        console.log("================ Poker start! ================ ");
         /* 建構主stage */
         this.phaserGame = new Phaser.Game(this.width, this.height, this.renderer, this.parentElementId);
+        /* 移除 phaser console */
+        this.phaserGame.showDebugHeader = () => null;
         this.phaserGame.padding = this.padding;
         this.phaserGame.dragPendingCallback = this.dragPendingCallback;
         this.phaserGame.dragStartCallback = this.dragStartCallback;
@@ -45,11 +46,9 @@ export default class Poker {
     }
 
     finish():boolean {
-        console.log("================ Poker finish! ================ ");
         if (this.phaserGame && this.phaserGame.finish) {
             this.phaserGame.finish();
         } else {
-            console.log("stage 尚未準備就緒");
             return false;
         }
         return true;
@@ -57,6 +56,5 @@ export default class Poker {
 
     destroy():void {
         this.phaserGame.destroy();
-        console.log("================ Poker destroy! ================ ");
     }
 }

@@ -4,9 +4,14 @@
  */
 import Card         from '../Components/Card';
 import Motion       from '../Components/Motion';
-import BottomRight  from './DragArea/BottomRight';
+import Top          from './DragArea/Top';
 import Right        from './DragArea/Right';
+import Bottom       from './DragArea/Bottom';
+import Left         from './DragArea/Left';
 import TopRight     from './DragArea/TopRight';
+import BottomRight  from './DragArea/BottomRight';
+import TopLeft      from './DragArea/TopLeft';
+import BottomLeft  from './DragArea/BottomLeft';
 
 export default class DragAction {
     masterStage:Object;
@@ -29,14 +34,19 @@ export default class DragAction {
     /* 寫入所有觸發區 */
     _registerComponents():void {
         this.dragArea.push(
-            new BottomRight(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new Top(this.masterStage, this.card, this.motion).getTriggerArea(),
             new Right(this.masterStage, this.card, this.motion).getTriggerArea(),
-            //new TopRight(this.masterStage, this.card, this.motion).getTriggerArea()
+            new Bottom(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new Left(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new TopRight(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new TopLeft(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new BottomRight(this.masterStage, this.card, this.motion).getTriggerArea(),
+            new BottomLeft(this.masterStage, this.card, this.motion).getTriggerArea()
         );
 
         this.masterStage.physics.startSystem(Phaser.Physics.P2JS);
         this.masterStage.physics.p2.setImpactEvents(true);
-        this.masterStage.physics.p2.enable(this.dragArea, true);
+        this.masterStage.physics.p2.enable(this.dragArea);
 
         /* 解除碰撞事件 */
         this.dragArea.map(sprite => {

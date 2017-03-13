@@ -1,9 +1,10 @@
 /**
- * Created by arShown on 2017/3/10.
+ * Created by arShown on 2016/6/8.
+ * Updated on 2017/3/8.
  */
 import Base                           from './Base';
 import {
-    RIGHT,
+    BOTTOM,
     TOP_LEFT,
     TOP_RIGHT,
     BOTTOM_RIGHT,
@@ -12,26 +13,33 @@ import {
 } from '../../Constants/Constants';
 import Card                           from '../../Components/Card';
 import Motion                         from '../../Components/Motion';
-import {zeroThrow}                    from '../../Helpers/Points';
+import {
+    sizeBetweenPoints,
+    unSlopeBetweenPoints,
+    distanceBetweenPoints,
+    middleBetweenPoints,
+    getMirrorPosition,
+    zeroThrow
+} from '../../Helpers/Points';
 
-export default class Right extends Base {
+export default class Bottom extends Base {
     originPosition:{
-        leftX:number,
-        originX:number,
         topY:number,
-        bottomY:number
+        originY:number,
+        leftX:number,
+        rightX:number
     };
 
     constructor(masterStage:Object, card:Card, motion:Motion) {
         super(masterStage, card, motion);
 
-        /* 基準點: 右下 */
+        /* 基準點：右下 */
         const {width, height, padding} = masterStage;
         this.originPosition = {
-            leftX: padding,
-            originX: width - padding,
             topY: padding,
-            bottomY: height - padding
+            originY: height - padding, 
+            leftX: padding,
+            rightX: width - padding
         };
     }
 
@@ -41,20 +49,20 @@ export default class Right extends Base {
      */
     getTriggerArea():Object {
         const {width, height, padding} = this.masterStage;
-        const {originX, topY} = this.originPosition;
+        const {originY, leftX} = this.originPosition;
 
-        const areaSizeHeightBlock = parseInt((height - 2 * padding) / 6),
-            areaSizeWidth = parseInt((width - 2 * padding) / 4),
-            areaSizeHeight = height - 2 * (padding + areaSizeHeightBlock);
-        return super.getTriggerArea(areaSizeWidth, areaSizeHeight, originX - (areaSizeWidth / 2), topY + (areaSizeHeight / 2) + areaSizeHeightBlock);
+        const areaSizeWidthBlock = parseInt((width - 2 * padding) / 4),
+            areaSizeWidth = width - 2 * (padding + areaSizeWidthBlock),
+            areaSizeHeight = parseInt((height - 2 * padding) / 6);
+        return super.getTriggerArea(areaSizeWidth, areaSizeHeight, leftX + (areaSizeWidth / 2) + areaSizeWidthBlock, originY - (areaSizeHeight / 2));
     }
 
     /**
      * 檢查是不是符合開牌範圍
      */
     isTimeToOpen(pointer:Object):boolean {
-        const {width} = this.masterStage;
-        return pointer.x <= (width / 2);
+        const {height} = this.masterStage;
+        return pointer.y <= (height / 2);
     }
 
     /**
@@ -70,9 +78,9 @@ export default class Right extends Base {
             this.openMotion(pointer);
             return null;
         }
-        const {originX} = this.originPosition;
-        const pointX = Math.min(pointer.x, originX);
-        this.render(pointX);
+        const {originY} = this.originPosition;
+        const pointY = Math.min(pointer.y, originY);
+        this.render(pointY);
     }
 
     /**
@@ -83,26 +91,24 @@ export default class Right extends Base {
             return null;
         }
         this.motionFlag = false;
-
-        const {originX, topY, bottomY, leftX} = this.originPosition;
-        const {padding} = this.masterStage;
+        const {topY, originY, leftX, rightX} = this.originPosition;
         /*
          * 觸發時的座標
          */
         let {x, y} = pointer;
         /* 碰到邊界 */
-        x = Math.min(x, originX);
+        y = Math.min(y, originY);
 
         /* parent */
         super.openMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(leftX - x, 100));
+        const limit = Math.abs(zeroThrow(topY - y, 100));
         this.bindInterval(function () {
-            if (x <= leftX) {
+            if (y <= topY) {
                 return this.finishInterval();
             }
-            x = parseFloat(x - limit);
-            this.render(x);
+            y = parseFloat(y - limit);
+            this.render(y);
         }.bind(this));
 
     }
@@ -116,25 +122,24 @@ export default class Right extends Base {
             return null;
         }
         this.motionFlag = false;
-
-        const {originX} = this.originPosition;
+        const {topY, originY} = this.originPosition;
         /*
          * 放開時的座標
          */
         let {x, y} = pointer;
         /* 碰到邊界 */
-        x = Math.min(x, originX);
+        y = Math.min(y, originY);
 
         /* parent */
         super.resetMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(originX - x, 100));
+        const limit = Math.abs(zeroThrow(originY - topY, 100));
         this.bindInterval(function () {
-            if (x >= originX) {
+            if (y >= originY) {
                 return this.restoreInterval();
             }
-            x = parseFloat(x + limit);
-            this.render(x);
+            y = parseFloat(y + limit);
+            this.render(y);
         }.bind(this));
 
     }
@@ -144,28 +149,30 @@ export default class Right extends Base {
      * @param pointX
      * @param pointY
      */
-    render(pointX:number):void {
-        this.motion.direction = this.card.direction = RIGHT;
-        const {originX, topY, bottomY, leftX} = this.originPosition;
+    render(pointY:number):void {
+        this.motion.direction = this.card.direction = BOTTOM;
+        const {topY, originY, leftX, rightX} = this.originPosition;
         /* 碰到邊界 */
-        pointX = Math.min(pointX, originX - 1);
+        pointY = Math.min(pointY, originY - 1);
 
         /*
          * 生成路徑
          */
-        const cardPositionData = {}, positionData = {};
+        const cardPositionData = {};
+        const positionData = {};
 
         /* 移動區元件 */
-        positionData[TOP_LEFT] = [pointX, topY];
-        positionData[TOP_RIGHT] = [(originX + pointX) / 2, topY];
-        positionData[BOTTOM_RIGHT] = [(originX + pointX) / 2, bottomY];
-        positionData[BOTTOM_LEFT] = [pointX, bottomY];
+        positionData[TOP_LEFT] = [leftX, (originY + pointY) / 2];
+        positionData[TOP_RIGHT] = [rightX, (originY + pointY) / 2];
+        positionData[BOTTOM_RIGHT] = [rightX, pointY];
+        positionData[BOTTOM_LEFT] = [leftX, pointY];
         positionData[ANOTHER_POS] = [];
+
         /* 卡片元件 */
         cardPositionData[TOP_LEFT] = [leftX, topY];
-        cardPositionData[TOP_RIGHT] = [pointX, topY];
-        cardPositionData[BOTTOM_RIGHT] = [pointX, bottomY];
-        cardPositionData[BOTTOM_LEFT] = [leftX, bottomY];
+        cardPositionData[TOP_RIGHT] = [rightX, topY];
+        cardPositionData[BOTTOM_RIGHT] = [rightX, (originY + pointY) / 2];
+        cardPositionData[BOTTOM_LEFT] = [leftX, (originY + pointY) / 2];
         cardPositionData[ANOTHER_POS] = [];
 
         /* 呼叫繪製 */

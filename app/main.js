@@ -18,7 +18,7 @@ window.onload = function () {
      * The DOM element into which this games canvas will be injected.
      * Either a DOM ID (string) or the element itself.
      */
-    game.cardImgFileName = "poker1.png";
+    game.cardImgFileName = "poker2.png";
     game.parentElementId = "container";
     game.width = 400;
     game.height = 500;

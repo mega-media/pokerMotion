@@ -20,7 +20,6 @@ export default class MainStage {
      * 預載
      */
     preload():void {
-        console.log("========== stage preload ==========");
         this.masterStage.load.image(CARD_IMAGE, "assets/images/pokerCover.jpg");
         this.masterStage.load.image(MOTION_IMAGE, "assets/images/" + this.cardImg);
     }
@@ -29,7 +28,6 @@ export default class MainStage {
      * 舞台建立
      */
     create():void {
-        console.log("========== stage create ==========");
         /* 繪製卡牌 */
         const card = new Card(this.masterStage);
         card.initialize();

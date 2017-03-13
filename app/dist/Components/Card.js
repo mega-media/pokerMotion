@@ -55,12 +55,12 @@ export default class Card {
     }
 
     render():void {
-        const {padding} = this.masterStage;
+        const {width, height, padding} = this.masterStage;
         /* 卡牌元件 */
         if (!this.selfStage) {
             this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE);
-            this.selfStage.width = this.masterStage.width - (2 * padding);
-            this.selfStage.height = this.masterStage.height - (2 * padding);
+            this.selfStage.width = width - (2 * padding);
+            this.selfStage.height = height - (2 * padding);
         }
         const stage:Object = this.selfStage;
         stage.mask = null;

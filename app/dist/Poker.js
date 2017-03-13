@@ -28,13 +28,15 @@ export default class Poker {
         this.width = this.height = this.padding = 0;
         this.dragPendingCallback = this.dragStartCallback = this.dragStopCallback = this.dragFinishCallback = () => {
         };
+        /* 移除 phaser console */
+        window.PhaserGlobal = {
+            hideBanner: true
+        };
     }
 
     start():void {
         /* 建構主stage */
         this.phaserGame = new Phaser.Game(this.width, this.height, this.renderer, this.parentElementId);
-        /* 移除 phaser console */
-        this.phaserGame.showDebugHeader = () => null;
         this.phaserGame.padding = this.padding;
         this.phaserGame.dragPendingCallback = this.dragPendingCallback;
         this.phaserGame.dragStartCallback = this.dragStartCallback;

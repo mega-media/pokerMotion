@@ -19,6 +19,7 @@ import {angleBetweenPoints}     from '../Helpers/Points';
 
 export default class Motion {
     masterStage:Object;
+    cardIndex:number;
     store:StorageLibrary;
     positions:{
         [key:string]:Array<number>
@@ -26,13 +27,15 @@ export default class Motion {
     selfStage:?Object;
     direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT" | "TOP" | "RIGHT" | "BOTTOM" | "LEFT");
 
-    constructor(masterStage:Object) {
+    constructor(masterStage:Object, cardImg:string) {
         this.masterStage = masterStage;
         this.store = masterStage.store;
         this.positions = {};
         this.direction = null;
         this.selfStage = null;
+        this.cardIndex = this.getCardIndex(cardImg);
     }
+
 
     finish():void {
         const {padding} = this.masterStage;
@@ -92,13 +95,17 @@ export default class Motion {
         /* 元件 */
         if (!this.selfStage) {
             const {padding} = this.masterStage;
-            this.selfStage = this.masterStage.add.sprite(padding, padding, MOTION_IMAGE);
+            this.selfStage = this.masterStage.add.sprite(padding, padding, MOTION_IMAGE, this.cardIndex);
             this.selfStage.width = this.masterStage.width - (2 * padding);
             this.selfStage.height = this.masterStage.height - (2 * padding);
         }
         this.selfStage = Object.assign(this.selfStage, maskSprite);
         this.selfStage.mask = pokerMask;
         this.selfStage.anchor.setTo(this.selfStage.anchorX, this.selfStage.anchorY);
+    }
+
+    getCardIndex(cardImg:string):number {
+        return parseInt(Math.random() * 52);
     }
 
     getMaskSprite():Object {

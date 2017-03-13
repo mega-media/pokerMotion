@@ -162,10 +162,10 @@ export default class Left extends Base {
         positionData[BOTTOM_LEFT] = [(originX + pointX) / 2, bottomY];
         positionData[ANOTHER_POS] = [];
         /* 卡片元件 */
-        cardPositionData[TOP_LEFT] = [pointX, topY];
+        cardPositionData[TOP_LEFT] = [(originX + pointX) / 2, topY];
         cardPositionData[TOP_RIGHT] = [rightX, topY];
         cardPositionData[BOTTOM_RIGHT] = [rightX, bottomY];
-        cardPositionData[BOTTOM_LEFT] = [pointX, bottomY];
+        cardPositionData[BOTTOM_LEFT] = [(originX + pointX) / 2, bottomY];
         cardPositionData[ANOTHER_POS] = [];
 
         /* 呼叫繪製 */

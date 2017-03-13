@@ -20,8 +20,10 @@ export default class MainStage {
      * 預載
      */
     preload():void {
-        this.masterStage.load.image(CARD_IMAGE, "assets/images/pokerCover.jpg");
-        this.masterStage.load.image(MOTION_IMAGE, "assets/images/" + this.cardImg);
+        const {width, height, padding} = this.masterStage;
+        this.masterStage.load.image(CARD_IMAGE, "assets/images/back.svg");
+        this.masterStage.load.spritesheet(MOTION_IMAGE, "assets/images/card.svg", 72, 110);
+        this.masterStage.stage.backgroundColor = "#ffffff";
     }
 
     /**
@@ -32,7 +34,7 @@ export default class MainStage {
         const card = new Card(this.masterStage);
         card.initialize();
         /* 繪製移動區 */
-        const motion = new Motion(this.masterStage);
+        const motion = new Motion(this.masterStage, this.cardImg);
         /* 啟動拖曳事件 */
         const dragAction = new DragAction(this.masterStage, card, motion);
         dragAction.startDragMotion();

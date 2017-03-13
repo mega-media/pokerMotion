@@ -20,8 +20,8 @@ window.onload = function () {
      */
     game.cardImgFileName = "poker2.png";
     game.parentElementId = "container";
-    game.width = 400;
-    game.height = 500;
+    game.width = 320;
+    game.height = 445;
     game.padding = 50;
     const openEle = document.getElementById("open");
     openEle && openEle.addEventListener('click', game.finish.bind(game));

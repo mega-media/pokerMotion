@@ -1,8 +1,8 @@
 {
   "name": "PockerMotion",
   "version": "1.0.0",
-  "description": "Pocker Motion Example",
-  "main": "index.js",
+  "description": "Pocker Motion",
+  "main": "app/main.js",
   "scripts": {
     "flow-install": "flow-typed install --overwrite",
     "flow-test": "flow || notify -t 'Flow Type' -m 'something mistake'",
@@ -10,8 +10,9 @@
     "mocha-test": "cross-env NODE_PATH=./app/dist NODE_ENV=test mocha --opts ./.mochaopts \"__test__/**/*.test.*\" || exit 0",
     "mocha-test:watch": "cross-env NODE_PATH=./app/dist NODE_ENV=test mocha --watch --opts ./.mochaopts \"__test__/**/*.test.*\"",
     "start": "cross-env NODE_ENV=development npm run build && webpack-dev-server --devtool eval --progress --colors --hot --content-base build",
-    "copy": "cp app/index.html build/index.html && cp -a app/assets/ build/assets",
-    "build": "webpack && npm run copy"
+    "copy": "cp app/index.html build/index.html && cp -a app/assets/images/ build",
+    "build": "webpack && npm run copy",
+    "release": "cross-env NODE_ENV=production webpack -p --config ./webpack.prod.config.js && cp -a app/assets/images/ release/assets"
   },
   "author": "shown",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "babel-runtime": "^6.23.0",
     "chai": "^3.5.0",
     "expose-loader": "^0.7.3",
+    "file-loader": "^0.10.1",
     "flow-bin": "^0.41.0",
     "flow-typed": "^2.0.0",
     "growl": "^1.9.2",
@@ -34,6 +36,7 @@
     "node-notifier-cli": "^1.0.1",
     "script-loader": "^0.7.0",
     "sinon": "^1.17.7",
+    "url-loader": "^0.5.8",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1",
     "webpack-notifier": "^1.5.0"
@@ -41,7 +44,6 @@
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "cross-env": "^3.2.3",
-    "es6-promise": "^4.1.0",
     "keymirror": "^0.1.1",
     "path": "^0.12.7",
     "phaser": "2.6.2"

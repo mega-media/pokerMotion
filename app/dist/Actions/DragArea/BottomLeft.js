@@ -26,8 +26,8 @@ export default class BottomLeft extends Base {
     constructor(masterStage:Object, card:Card, motion:Motion) {
         super(masterStage, card, motion);
 
-        /* 基準點：右下 */
-        const {width, height, padding} = masterStage;
+        /* 基準點：左下 */
+        const {height, padding} = masterStage;
         this.originPosition = [padding, height - padding];
     }
 

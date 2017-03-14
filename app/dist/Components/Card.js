@@ -1,6 +1,6 @@
 /**
  * Created by arShown on 2016/6/7.
- * Updated on 2017/3/8.
+ * Updated on 2017/3/14
  */
 import {
     TOP_LEFT,
@@ -58,7 +58,7 @@ export default class Card {
         const {width, height, padding} = this.masterStage;
         /* 卡牌元件 */
         if (!this.selfStage) {
-            this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE);
+            this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE, 52);
             this.selfStage.width = width - (2 * padding);
             this.selfStage.height = height - (2 * padding);
         }

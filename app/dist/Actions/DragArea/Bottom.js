@@ -91,7 +91,7 @@ export default class Bottom extends Base {
             return null;
         }
         this.motionFlag = false;
-        const {topY, originY, leftX, rightX} = this.originPosition;
+        const {topY, originY} = this.originPosition;
         /*
          * 觸發時的座標
          */

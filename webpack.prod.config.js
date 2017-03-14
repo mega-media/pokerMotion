@@ -1,7 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const WebpackNotifierPlugin = require('webpack-notifier');
-
 const phaserModule = path.join(__dirname, '/node_modules/phaser/');
 const phaser = path.join(phaserModule, 'build/custom/phaser-split.js'),
     pixi = path.join(phaserModule, 'build/custom/pixi.js'),
@@ -9,9 +7,7 @@ const phaser = path.join(phaserModule, 'build/custom/phaser-split.js'),
 
 const config = {
     entry: [
-        'webpack-dev-server/client?http://localhost:8080',
-        'webpack/hot/dev-server',
-        path.resolve(__dirname, 'app/demo.js')
+        path.resolve(__dirname, 'app/main.js')
     ],
     module: {
         loaders: [
@@ -41,11 +37,17 @@ const config = {
     },
     plugins: [
         new webpack.NoErrorsPlugin(),
-        new WebpackNotifierPlugin()
+        new webpack.optimize.UglifyJsPlugin({
+            output: {
+                comments: false
+            }
+        })
     ],
     output: {
-        path: path.resolve(__dirname, 'build'),
-        filename: 'bundle.js'
+        libraryTarget: 'umd',
+        library: 'Poker',
+        path: path.resolve(__dirname, 'release'),
+        filename: 'poker.min.js'
     }
 };
 module.exports = config;

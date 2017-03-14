@@ -1,6 +1,6 @@
 /**
  * Created by arShown on 2016/6/7.
- * Updated on 2017/3/8
+ * Updated on 2017/3/14
  */
 import {
     TOP,
@@ -12,30 +12,27 @@ import {
     BOTTOM_RIGHT,
     BOTTOM_LEFT,
     ANOTHER_POS,
+    CARD_IMAGE,
     MOTION_IMAGE
 }  from '../Constants/Constants';
-import StorageLibrary           from '../Libraries/StorageLibrary';
 import {angleBetweenPoints}     from '../Helpers/Points';
 
 export default class Motion {
     masterStage:Object;
     cardIndex:number;
-    store:StorageLibrary;
     positions:{
         [key:string]:Array<number>
     };
     selfStage:?Object;
     direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT" | "TOP" | "RIGHT" | "BOTTOM" | "LEFT");
 
-    constructor(masterStage:Object, cardImg:string) {
+    constructor(masterStage:Object) {
         this.masterStage = masterStage;
-        this.store = masterStage.store;
         this.positions = {};
         this.direction = null;
         this.selfStage = null;
-        this.cardIndex = this.getCardIndex(cardImg);
+        this.cardIndex = this.getCardIndex();
     }
-
 
     finish():void {
         const {padding} = this.masterStage;
@@ -47,7 +44,10 @@ export default class Motion {
             ANOTHER_POS: []
         };
         this.direction = null;
-        this.render();
+        /* 移除舊的 stage */
+        this.remove();
+        /* 開牌 */
+        this.render("opened");
     }
 
     restore():void {
@@ -66,7 +66,7 @@ export default class Motion {
         this.render();
     }
 
-    render():void {
+    render(status?:string = 'default'):void {
         let maskSprite = {};
         /* 遮罩 */
         const pokerMask = new Phaser.Graphics(this.masterStage);
@@ -95,7 +95,7 @@ export default class Motion {
         /* 元件 */
         if (!this.selfStage) {
             const {padding} = this.masterStage;
-            this.selfStage = this.masterStage.add.sprite(padding, padding, MOTION_IMAGE, this.cardIndex);
+            this.selfStage = this.masterStage.add.sprite(padding, padding, status === "opened" ? CARD_IMAGE : MOTION_IMAGE, this.cardIndex);
             this.selfStage.width = this.masterStage.width - (2 * padding);
             this.selfStage.height = this.masterStage.height - (2 * padding);
         }
@@ -104,8 +104,28 @@ export default class Motion {
         this.selfStage.anchor.setTo(this.selfStage.anchorX, this.selfStage.anchorY);
     }
 
-    getCardIndex(cardImg:string):number {
-        return parseInt(Math.random() * 52);
+    getCardIndex():number {
+        const {cardCode} = this.masterStage;
+        const color = cardCode.charAt(0);
+        const number = parseInt(cardCode.slice(1, cardCode.length)) - 1;
+        let code = 53;
+        if (number <= 13 && number >= 0) {
+            switch (color) {
+                case "S":
+                    code = number;
+                    break;
+                case "H":
+                    code = number + 13;
+                    break;
+                case "D":
+                    code = number + 2 * 13;
+                    break;
+                case "C":
+                    code = number + 3 * 13;
+                    break;
+            }
+        }
+        return code;
     }
 
     getMaskSprite():Object {

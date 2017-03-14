@@ -84,8 +84,7 @@ export default class Right extends Base {
         }
         this.motionFlag = false;
 
-        const {originX, topY, bottomY, leftX} = this.originPosition;
-        const {padding} = this.masterStage;
+        const {originX, leftX} = this.originPosition;
         /*
          * 觸發時的座標
          */

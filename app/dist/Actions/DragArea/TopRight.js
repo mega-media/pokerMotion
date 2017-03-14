@@ -28,7 +28,7 @@ export default class TopRight extends Base {
         super(masterStage, card, motion);
 
         /* 基準點：右上角 */
-        const {width, height, padding} = masterStage;
+        const {width, padding} = masterStage;
         this.originPosition = [width - padding, padding];
     }
 

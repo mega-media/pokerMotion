@@ -2,6 +2,7 @@
  * Created by arShown on 2016/6/7.
  * Updated on 2017/3/14
  */
+import path                         from 'path';
 import Card                         from '../Components/Card';
 import Motion                       from '../Components/Motion';
 import DragAction                   from '../Actions/DragAction';
@@ -19,8 +20,8 @@ export default class MainStage {
      */
     preload():void {
         const {backgroundColor, assertUrl} = this.masterStage;
-        this.masterStage.load.spritesheet(CARD_IMAGE, `${assertUrl}/poker.svg`, 29, 41);
-        this.masterStage.load.spritesheet(MOTION_IMAGE, `${assertUrl}/pokerNoNumber.svg`, 29, 41);
+        this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.svg`), 29, 41);
+        this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.svg`), 29, 41);
         this.masterStage.stage.backgroundColor = backgroundColor;
     }
 

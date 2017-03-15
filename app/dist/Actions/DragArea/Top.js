@@ -33,7 +33,7 @@ export default class Top extends Base {
     constructor(masterStage:Object, card:Card, motion:Motion) {
         super(masterStage, card, motion);
 
-        /* 基準點：右上 */
+        /* 基準點：上 */
         const {width, height, padding} = masterStage;
         this.originPosition = {
             bottomY: height - padding,
@@ -157,6 +157,26 @@ export default class Top extends Base {
 
         /*
          * 生成路徑
+         * A - - - - - - - - - B
+         * |                   |
+         * C - - - - - - - - - D
+         * |                   |
+         * |                   |
+         * E - - - - - - - - - F
+         *
+         * positionData
+         * --
+         * TOP_LEFT     = C
+         * TOP_RIGHT    = D
+         * BOTTOM_RIGHT = B
+         * BOTTOM_LEFT  = A
+         *
+         * cardPositionData
+         * --
+         * TOP_LEFT     = A
+         * BOTTOM_LEFT  = E
+         * BOTTOM_RIGHT = F
+         * TOP_RIGHT    = B
          */
         const cardPositionData = {};
         const positionData = {};
@@ -170,10 +190,10 @@ export default class Top extends Base {
 
         /* 卡片元件 */
         cardPositionData[TOP_LEFT] = [leftX, (originY + pointY) / 2];
-        cardPositionData[TOP_RIGHT] = [rightX, (originY + pointY) / 2];
-        cardPositionData[BOTTOM_RIGHT] = [rightX, bottomY];
         cardPositionData[BOTTOM_LEFT] = [leftX, bottomY];
+        cardPositionData[BOTTOM_RIGHT] = [rightX, bottomY];
         cardPositionData[ANOTHER_POS] = [];
+        cardPositionData[TOP_RIGHT] = [rightX, (originY + pointY) / 2];
 
         /* 呼叫繪製 */
         this.card.update(cardPositionData[TOP_LEFT], cardPositionData[TOP_RIGHT], cardPositionData[BOTTOM_RIGHT], cardPositionData[BOTTOM_LEFT], cardPositionData[ANOTHER_POS]);

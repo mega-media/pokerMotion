@@ -215,6 +215,28 @@ export default class BottomRight extends Base {
             const {mirrorX, mirrorY} = mirrorPosition(originX, padding);
             /*
              * 生成右四邊形路徑
+             * A - - - - B - - C
+             * |         |     |
+             * |         |     |
+             * |         |     |
+             * |         |     |
+             * |         |     |
+             * |         |     |
+             * D - - - - E - - F
+             *
+             * positionData
+             * --
+             * TOP_LEFT     = B
+             * TOP_RIGHT    = C
+             * BOTTOM_RIGHT = F
+             * BOTTOM_LEFT  = E
+             *
+             * cardPositionData
+             * --
+             * TOP_LEFT     = A
+             * BOTTOM_LEFT  = D
+             * BOTTOM_RIGHT = F
+             * TOP_RIGHT    = C
              */
             /* 移動區元件 */
             positionData[TOP_LEFT] = [mirrorX, mirrorY];
@@ -224,17 +246,36 @@ export default class BottomRight extends Base {
             positionData[ANOTHER_POS] = [];
             /* 卡片元件 */
             cardPositionData[TOP_LEFT] = [padding, padding];
-            cardPositionData[TOP_RIGHT] = getIntersectPosition(0, 1, padding);
-            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
             cardPositionData[BOTTOM_LEFT] = [padding, originY];
+            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
             cardPositionData[ANOTHER_POS] = [];
+            cardPositionData[TOP_RIGHT] = getIntersectPosition(0, 1, padding);
         }
         else if (sizeLeft > (width - (2 * padding))) {
             const {mirrorX, mirrorY} = mirrorPosition(padding, originY);
             /*
              * 生成下四邊形路徑
+             * A - - - - - - - - - B
+             * |                   |
+             * |                   |
+             * C - - - - - - - - - D
+             * |                   |
+             * E - - - - - - - - - F
+             *
+             * positionData
+             * --
+             * TOP_LEFT     = F
+             * TOP_RIGHT    = E
+             * BOTTOM_RIGHT = C
+             * BOTTOM_LEFT  = D
+             *
+             * cardPositionData
+             * --
+             * TOP_LEFT     = A
+             * BOTTOM_LEFT  = E
+             * BOTTOM_RIGHT = F
+             * TOP_RIGHT    = B
              */
-
             /* 移動區元件 */
             positionData[TOP_LEFT] = getIntersectPosition(1, 0, originX);
             positionData[TOP_RIGHT] = getIntersectPosition(1, 0, padding);
@@ -244,13 +285,35 @@ export default class BottomRight extends Base {
 
             /* 卡片元件 */
             cardPositionData[TOP_LEFT] = [padding, padding];
-            cardPositionData[TOP_RIGHT] = [originX, padding];
-            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(1, 0, originY);
             cardPositionData[BOTTOM_LEFT] = getIntersectPosition(1, 0, padding);
+            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(1, 0, originX);
             cardPositionData[ANOTHER_POS] = [];
+            cardPositionData[TOP_RIGHT] = [originX, padding];
         } else {
             /*
              * 生成三角形路徑
+             * A - - - - - - - - - B
+             * |                   |
+             * |                   |
+             * |                   |
+             * |           C - - - D
+             * |           |    /
+             * |           |  /
+             * E - - - - - F
+             *
+             * positionData
+             * --
+             * TOP_LEFT     = D
+             * BOTTOM_RIGHT = F
+             * BOTTOM_LEFT  = C
+             *
+             * cardPositionData
+             * --
+             * TOP_LEFT     = A
+             * BOTTOM_LEFT  = E
+             * BOTTOM_RIGHT = F
+             * ANOTHER_POS  = D
+             * TOP_RIGHT    = B
              */
             /* 移動區元件 */
             positionData[TOP_LEFT] = getIntersectPosition(1, 0, originX);
@@ -261,10 +324,10 @@ export default class BottomRight extends Base {
 
             /* 卡片元件 */
             cardPositionData[TOP_LEFT] = [padding, padding];
-            cardPositionData[TOP_RIGHT] = [originX, padding];
-            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
             cardPositionData[BOTTOM_LEFT] = [padding, originY];
+            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
             cardPositionData[ANOTHER_POS] = getIntersectPosition(1, 0, originX);
+            cardPositionData[TOP_RIGHT] = [originX, padding];
         }
         /* 呼叫繪製 */
         this.card.update(cardPositionData[TOP_LEFT], cardPositionData[TOP_RIGHT], cardPositionData[BOTTOM_RIGHT], cardPositionData[BOTTOM_LEFT], cardPositionData[ANOTHER_POS]);

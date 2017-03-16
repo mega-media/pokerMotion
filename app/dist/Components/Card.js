@@ -1,117 +1,109 @@
 /**
  * Created by arShown on 2016/6/7.
+ * Updated on 2017/3/8.
  */
-"use strict";
-import BaseComponent from './BaseComponent';
-import Model from '../Models/Model';
-import Contants from '../Contants/Contants';
-import EventsListenLibrary from '../Libraries/EventsListenLibrary';
-import UnitLibrary from '../Libraries/UnitLibrary';
+import {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, ANOTHER_POS, CARD_IMAGE} from '../Constants/Constants';
 
-export default class Card extends BaseComponent {
-  constructor(masterStage) {
-    super();
-    this.masterStage = masterStage;
-    this._registerComponents();
-    this._setListener();
-  }
+export default class Card {
+    masterStage:Object;
+    positions:{
+        [key:string]:Array<number>
+    };
+    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT");
+    selfStage:?Object;
 
-  _registerComponents() {
-    this.padding = this.masterStage.stagePadding;
-    this.stage = {};
-    this.model = new Model(this.masterStage.pokerPrimaryKey);
-    this._initPosition();
-  }
-
-  _initPosition() {
-    this.positions = {};
-    this.positions[Contants.TOP_LEFT] = [];
-    this.positions[Contants.BOTTOM_LEFT] = [];
-    this.positions[Contants.BOTTOM_RIGHT] = [];
-    this.positions[Contants.ANOTHER_POS] = [];
-    this.positions[Contants.TOP_RIGHT] = [];
-  }
-
-  _setListener() {
-    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey, Contants.CARD_CREATE, this.create.bind(this));
-    EventsListenLibrary.addListener(this.masterStage.pokerPrimaryKey, Contants.CARD_UPDATE, this.update.bind(this));
-  }
-
-  create() {
-    const defaultPositions = {};
-    defaultPositions[Contants.TOP_LEFT] = [this.padding, this.padding];
-    defaultPositions[Contants.TOP_RIGHT] = [this.masterStage.width - this.padding, this.padding];
-    defaultPositions[Contants.BOTTOM_RIGHT] = [this.masterStage.width - this.padding, this.masterStage.height - this.padding];
-    defaultPositions[Contants.BOTTOM_LEFT] = [this.padding, this.masterStage.height - this.padding];
-
-    this._initPosition();
-    this.positions = Object.assign(this.positions, defaultPositions);
-    this.model.set(Contants.CARD_DB_KEY, defaultPositions);
-    return this.render();
-  }
-
-  update() {
-    this._initPosition();
-    this.positions = Object.assign(this.positions, this.model.get(Contants.CARD_DB_KEY));
-    return this.render();
-  }
-
-  _getKeySort() {
-    let keySort = [];
-    var origin_direction = this.model.get(Contants.MOVE_ORIGIN);
-    switch (origin_direction) {
-      case Contants.ORIGIN_BOTTOM_LEFT:
-        keySort = [
-          Contants.TOP_LEFT,
-          Contants.BOTTOM_LEFT,
-          Contants.BOTTOM_RIGHT,
-          Contants.ANOTHER_POS,
-          Contants.TOP_RIGHT
-        ];
-        break;
-      default:
-        keySort = [
-          Contants.TOP_LEFT,
-          Contants.BOTTOM_LEFT,
-          Contants.BOTTOM_RIGHT,
-          Contants.TOP_RIGHT
-        ];
-        break;
+    constructor(masterStage:Object) {
+        this.masterStage = masterStage;
+        this.positions = {};
+        this.direction = null;
+        this.selfStage = null;
     }
-    return keySort;
-  }
 
-  render() {
-    var pokerMask = new Phaser.Graphics(this.masterStage);
-    if (Object.keys(this.positions).length > 0) {
-      let keySort = this._getKeySort();
-      let firstPos = [];
-      keySort.map(key => {
-        let pos = this.positions[key];
-        if (pos.length == 0) {
-          return;
+    restore():void {
+        this.positions = {};
+        this.initialize();
+    }
+
+    initialize():void {
+        const {padding} = this.masterStage;
+        this.positions = {
+            TOP_LEFT: [padding, padding],
+            TOP_RIGHT: [this.masterStage.width - padding, padding],
+            BOTTOM_RIGHT: [this.masterStage.width - padding, this.masterStage.height - padding],
+            BOTTOM_LEFT: [padding, this.masterStage.height - padding],
+            ANOTHER_POS: []
+        };
+        this.render();
+    }
+
+    update(TL:Array<number> = [], TR:Array<number> = [], BR:Array<number> = [], BL:Array<number> = [], AP:Array<number> = []):void {
+        this.positions = {
+            TOP_LEFT: TL,
+            TOP_RIGHT: TR,
+            BOTTOM_RIGHT: BR,
+            BOTTOM_LEFT: BL,
+            ANOTHER_POS: AP
+        };
+        this.render();
+    }
+
+    _getKeySort():Array<string> {
+        let keySort = [];
+        switch (this.direction) {
+            case BOTTOM_RIGHT:
+                keySort = [
+                    TOP_LEFT,
+                    BOTTOM_LEFT,
+                    BOTTOM_RIGHT,
+                    ANOTHER_POS,
+                    TOP_RIGHT
+                ];
+                break;
+            default:
+                keySort = [
+                    TOP_LEFT,
+                    BOTTOM_LEFT,
+                    BOTTOM_RIGHT,
+                    TOP_RIGHT
+                ];
+                break;
         }
-        if (firstPos.length == 0) {
-          firstPos = pos;
-          pokerMask.moveTo(pos[0], pos[1]);
-          return;
-        }
-        pokerMask.lineTo(pos[0], pos[1]);
-      });
-      pokerMask.lineTo(firstPos[0], firstPos[1]);
+        return keySort;
     }
-    if (Object.keys(this.stage).length == 0) {
-      this.stage = this.masterStage.add.sprite(this.padding, this.padding, Contants.CARD_IMAGE);
-      this.stage.width = this.masterStage.width - (2 * this.padding);
-      this.stage.height = this.masterStage.height - (2 * this.padding);
-    }
-    this.stage.mask = pokerMask;
-    return this;
-  }
 
-  remove() {
-    this.masterStage.world.remove(this.stage);
-    this.stage = {};
-    return this;
-  }
+    render():void {
+        const {padding} = this.masterStage;
+        /* 卡牌元件 */
+        if (!this.selfStage) {
+            this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE);
+            this.selfStage.width = this.masterStage.width - (2 * padding);
+            this.selfStage.height = this.masterStage.height - (2 * padding);
+        }
+        const stage:Object = this.selfStage;
+        stage.mask = null;
+        /* 遮罩 */
+        if (Object.keys(this.positions).length) {
+            const pokerMask = new Phaser.Graphics(this.masterStage);
+            let keySort = this._getKeySort();
+            let firstPos = [];
+            keySort.map(key => {
+                let pos = this.positions[key];
+                if (pos.length) {
+                    if (firstPos.length === 0) {
+                        firstPos = pos;
+                        pokerMask.moveTo(pos[0], pos[1]);
+                    }
+                    pokerMask.lineTo(pos[0], pos[1]);
+                }
+            });
+            pokerMask.lineTo(firstPos[0], firstPos[1]);
+            /* 寫入遮罩 */
+            stage.mask = pokerMask;
+        }
+    }
+
+    remove(){
+        this.masterStage.world.remove(this.selfStage);
+        this.selfStage = null;
+    }
 }

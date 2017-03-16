@@ -1,37 +1,46 @@
 /**
  * Created by arShown on 2016/6/7.
+ * Updated on 2017/3/8.
  */
-"use strict";
-import BaseStage from './BaseStage';
 import Card from '../Components/Card';
 import Motion from '../Components/Motion';
 import DragAction from '../Actions/DragAction';
-import Contants from '../Contants/Contants';
-import EventsListenLibrary from '../Libraries/EventsListenLibrary';
+import {CARD_IMAGE, MOTION_IMAGE} from '../Constants/Constants';
 
-export default class MainStage extends BaseStage {
-  constructor(masterStage, cardImg) {
-    super();
-    this.masterStage = masterStage;
-    this.cardImg = cardImg;
-    this._registerComponents();
-  }
+export default class MainStage {
+    masterStage:Object;
+    cardImg:string;
 
-  _registerComponents() {
-    new Card(this.masterStage);
-    new Motion(this.masterStage);
-  }
+    constructor(masterStage:Object, cardImg:string) {
+        this.masterStage = masterStage;
+        this.cardImg = cardImg;
+    }
 
-  preload() {
-    console.log("========== preload all stage ==========");
-    this.masterStage.load.image(Contants.CARD_IMAGE, "assets/images/pokerCover.jpg");
-    this.masterStage.load.image(Contants.MOTION_IMAGE, "assets/images/" + this.cardImg);
-  }
+    /**
+     * 預載
+     */
+    preload():void {
+        console.log("========== stage preload ==========");
+        this.masterStage.load.image(CARD_IMAGE, "assets/images/pokerCover.jpg");
+        this.masterStage.load.image(MOTION_IMAGE, "assets/images/" + this.cardImg);
+    }
 
-  create() {
-    EventsListenLibrary.dispatchEvent(this.masterStage.pokerPrimaryKey, Contants.CARD_CREATE);
-    var dragAction = new DragAction(this.masterStage);
-    dragAction.startDragMotion();
-  }
+    /**
+     * 舞台建立
+     */
+    create():void {
+        console.log("========== stage create ==========");
+        /* 繪製卡牌 */
+        const card = new Card(this.masterStage);
+        card.initialize();
+        /* 繪製移動區 */
+        const motion = new Motion(this.masterStage);
+        /* 啟動拖曳事件 */
+        const dragAction = new DragAction(this.masterStage, card, motion);
+        dragAction.startDragMotion();
+
+        /* 將開牌寫入 masterStage.finish */
+        this.masterStage.finish = dragAction.finishDragMotion.bind(dragAction);
+    }
 
 }

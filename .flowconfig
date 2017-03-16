@@ -1,0 +1,19 @@
+[ignore]
+.*/node_modules/.*
+.*/build/.*
+.*/app/assets/.*
+
+[libs]
+./flow-typed
+./flow-libs
+
+[options]
+module.name_mapper='\(pixi.js\|p2\)' -> 'IgnoreModule'
+all=true
+module.file_ext=.js
+module.system=haste
+module.system.node.resolve_dirname=node_modules
+# 給單元測試 import 用
+module.system.node.resolve_dirname=./app/dist
+module.ignore_non_literal_requires=true
+unsafe.enable_getters_and_setters=true

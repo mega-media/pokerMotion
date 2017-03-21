@@ -48,7 +48,7 @@ export default class BottomLeft extends Base {
      */
     isTimeToOpen(pointer:Object):boolean {
         const {width, height} = this.masterStage;
-        return pointer.x >= (width / 2) || pointer.y <= (height / 3);
+        return pointer.x >= (width / 3 * 2) || pointer.y <= (height / 3);
     }
 
     /**
@@ -188,7 +188,7 @@ export default class BottomLeft extends Base {
 
         /* 碰到邊界 */
         pointX = Math.max(pointX, originX + 1);
-        pointY = Math.min(pointY, originY + 1);
+        pointY = Math.min(pointY, originY - 1);
 
         const {sizeLeft, sizeRight} = sizeBetweenPoints(pointX, originX, pointY, originY);
         const unSlope = unSlopeBetweenPoints(originX, pointX, originY, pointY);

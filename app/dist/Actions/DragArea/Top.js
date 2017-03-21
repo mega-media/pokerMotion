@@ -61,7 +61,7 @@ export default class Top extends Base {
      */
     isTimeToOpen(pointer:Object):boolean {
         const {height} = this.masterStage;
-        return pointer.y >= (height / 2);
+        return pointer.y >= (height / 3 * 2);
     }
 
     /**

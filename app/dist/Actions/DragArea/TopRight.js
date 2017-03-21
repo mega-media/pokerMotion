@@ -49,7 +49,7 @@ export default class TopRight extends Base {
      */
     isTimeToOpen(pointer:Object):boolean {
         const {width, height} = this.masterStage;
-        return pointer.x <= (width / 2) || pointer.y >= (height / 3 * 2);
+        return pointer.x <= (width / 3) || pointer.y >= (height / 3 * 2);
     }
 
     /**

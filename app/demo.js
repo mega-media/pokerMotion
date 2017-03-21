@@ -4,6 +4,12 @@
  */
 import Poker from "./main";
 
+
+function randomCard() {
+    const type = ["H", "S", "D", "C"];
+    return type[parseInt(Math.random() * 4)] + parseInt(Math.random() * 13 + 1);
+}
+
 var debug = true;
 window.onload = function () {
     /* Start */
@@ -13,7 +19,7 @@ window.onload = function () {
      * The DOM element into which this games canvas will be injected.
      * Either a DOM ID (string) or the element itself.
      */
-    game.cardCode = "C13";
+    game.cardCode = randomCard();
     game.parentElementId = "container";
     game.width = 420;
     game.height = 545;
@@ -24,6 +30,8 @@ window.onload = function () {
     const resetEle = document.getElementById("reset");
     resetEle && resetEle.addEventListener('click', () => {
         game.destroy();
+        game.cardCode = randomCard();
+        console.log(game.cardCode);
         game.start();
     });
     const msgEle:any = document.getElementById("msg");

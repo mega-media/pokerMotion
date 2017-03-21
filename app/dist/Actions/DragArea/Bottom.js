@@ -62,7 +62,7 @@ export default class Bottom extends Base {
      */
     isTimeToOpen(pointer:Object):boolean {
         const {height} = this.masterStage;
-        return pointer.y <= (height / 2);
+        return pointer.y <= (height / 3);
     }
 
     /**

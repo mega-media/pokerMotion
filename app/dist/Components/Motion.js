@@ -108,20 +108,24 @@ export default class Motion {
         const {cardCode} = this.masterStage;
         const color = cardCode.charAt(0);
         const number = parseInt(cardCode.slice(1, cardCode.length)) - 1;
-        let code = 53;
+        let code = 0;
         if (number <= 13 && number >= 0) {
             switch (color) {
                 case "S":
-                    code = number;
+                    /* 黑桃 */
+                    code = (12 - number) + 4 * 13;
                     break;
                 case "H":
-                    code = number + 13;
+                    /* 紅心 */
+                    code = (12 - number) + 3 * 13;
                     break;
                 case "D":
-                    code = number + 2 * 13;
+                    /* 方塊 */
+                    code = (12 - number) + 13;
                     break;
                 case "C":
-                    code = number + 3 * 13;
+                    /* 梅花 */
+                    code = (12 - number) + 2 * 13;
                     break;
             }
         }

@@ -20,8 +20,8 @@ export default class MainStage {
      */
     preload():void {
         const {backgroundColor, assertUrl} = this.masterStage;
-        this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.svg`), 29, 41);
-        this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.svg`), 29, 41);
+        this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.svg`), 216.2, 328);
+        this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.svg`), 216.2, 328);
         this.masterStage.stage.backgroundColor = backgroundColor;
     }
 

@@ -54,7 +54,7 @@ export default class Right extends Base {
      */
     isTimeToOpen(pointer:Object):boolean {
         const {width} = this.masterStage;
-        return pointer.x <= (width / 2);
+        return pointer.x <= (width / 3);
     }
 
     /**

@@ -1,35 +1,34 @@
 /**
  * Created by arShown on 2016/6/7.
- * Updated on 2017/3/8.
+ * Updated on 2017/3/14
  */
-import Card from '../Components/Card';
-import Motion from '../Components/Motion';
-import DragAction from '../Actions/DragAction';
-import {CARD_IMAGE, MOTION_IMAGE} from '../Constants/Constants';
+import path                         from 'path';
+import Card                         from '../Components/Card';
+import Motion                       from '../Components/Motion';
+import DragAction                   from '../Actions/DragAction';
+import {CARD_IMAGE, MOTION_IMAGE}   from '../Constants/Constants';
 
 export default class MainStage {
     masterStage:Object;
-    cardImg:string;
 
-    constructor(masterStage:Object, cardImg:string) {
+    constructor(masterStage:Object) {
         this.masterStage = masterStage;
-        this.cardImg = cardImg;
     }
 
     /**
      * 預載
      */
     preload():void {
-        console.log("========== stage preload ==========");
-        this.masterStage.load.image(CARD_IMAGE, "assets/images/pokerCover.jpg");
-        this.masterStage.load.image(MOTION_IMAGE, "assets/images/" + this.cardImg);
+        const {backgroundColor, assertUrl} = this.masterStage;
+        this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.svg`), 216.2, 328);
+        this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.svg`), 216.2, 328);
+        this.masterStage.stage.backgroundColor = backgroundColor;
     }
 
     /**
      * 舞台建立
      */
     create():void {
-        console.log("========== stage create ==========");
         /* 繪製卡牌 */
         const card = new Card(this.masterStage);
         card.initialize();

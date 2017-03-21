@@ -1,6 +1,5 @@
 /**
- * Created by arShown on 2016/6/8.
- * Updated on 2017/3/8.
+ * Created by arShown on 2017/3/11.
  */
 import Base                           from './Base';
 import {
@@ -21,15 +20,15 @@ import {
     zeroThrow
 } from '../../Helpers/Points';
 
-export default class BottomRight extends Base {
+export default class BottomLeft extends Base {
     originPosition:Array<number>;
 
     constructor(masterStage:Object, card:Card, motion:Motion) {
         super(masterStage, card, motion);
 
-        /* 基準點：右下 */
-        const {width, height, padding} = masterStage;
-        this.originPosition = [width - padding, height - padding];
+        /* 基準點：左下 */
+        const {height, padding} = masterStage;
+        this.originPosition = [padding, height - padding];
     }
 
     /**
@@ -41,7 +40,7 @@ export default class BottomRight extends Base {
         const [originX, originY] = this.originPosition;
         const areaSizeWidth = parseInt((width - 2 * padding) / 4),
             areaSizeHeight = parseInt((height - 2 * padding) / 6);
-        return super.getTriggerArea(areaSizeWidth, areaSizeHeight, originX - (areaSizeWidth / 2), originY - (areaSizeHeight / 2));
+        return super.getTriggerArea(areaSizeWidth, areaSizeHeight, originX + (areaSizeWidth / 2), originY - (areaSizeHeight / 2));
     }
 
     /**
@@ -49,7 +48,7 @@ export default class BottomRight extends Base {
      */
     isTimeToOpen(pointer:Object):boolean {
         const {width, height} = this.masterStage;
-        return pointer.x <= (width / 3) || pointer.y <= (height / 3);
+        return pointer.x >= (width / 3 * 2) || pointer.y <= (height / 3);
     }
 
     /**
@@ -67,7 +66,7 @@ export default class BottomRight extends Base {
         }
         const [originX, originY] = this.originPosition;
         const pointY = Math.min(pointer.y, originY);
-        const pointX = Math.min(pointer.x, originX);
+        const pointX = Math.max(pointer.x, originX);
         this.render(pointX, pointY);
     }
 
@@ -81,13 +80,13 @@ export default class BottomRight extends Base {
         this.motionFlag = false;
 
         const [originX, originY] = this.originPosition;
-        const {padding} = this.masterStage;
+        const {width, padding} = this.masterStage;
         /*
          * 觸發時的座標
          */
         let {x, y} = pointer;
         /* 碰到邊界 */
-        x = Math.min(x, originX);
+        x = Math.max(x, originX);
         y = Math.min(y, originY);
 
         /* parent */
@@ -100,14 +99,14 @@ export default class BottomRight extends Base {
 
         /* 判斷展開方向 */
         if (sizeX >= sizeY) {
-            /* 往左 */
-            const endX = padding,
+            /* 往右 */
+            const endX = width - padding,
                 limit = Math.abs(zeroThrow(endX - startX, intervalLimit));
             this.bindInterval(function () {
-                if (x <= endX) {
+                if (x >= endX) {
                     return this.finishInterval();
                 }
-                x = parseFloat(x - limit);
+                x = parseFloat(x + limit);
                 this.render(x, Math.min(originY, startY - zeroThrow(((x - startX) * (originY - startY)), (startX - endX))));
             }.bind(this));
         } else {
@@ -119,7 +118,7 @@ export default class BottomRight extends Base {
                     return this.finishInterval();
                 }
                 y = parseFloat(y - limit);
-                this.render(Math.min(originX, startX - zeroThrow(((y - startY) * (originX - startX)), (startY - endY))), y);
+                this.render(Math.max(originX, startX - zeroThrow(((y - startY) * (originX - startX)), (startY - endY))), y);
             }.bind(this));
         }
     }
@@ -140,7 +139,7 @@ export default class BottomRight extends Base {
          */
         let {x, y} = pointer;
         /* 碰到邊界 */
-        x = Math.min(x, originX);
+        x = Math.max(x, originX);
         y = Math.min(y, originY);
 
         /* parent */
@@ -155,13 +154,13 @@ export default class BottomRight extends Base {
 
         //重置
         if (sizeX >= sizeY) {
-            /* 往右 */
+            /* 往左 */
             const limit = Math.abs(zeroThrow(sizeX, intervalLimit));
             this.bindInterval(function () {
-                if (x >= endX) {
+                if (x <= endX) {
                     return this.restoreInterval();
                 }
-                x = parseFloat(x + limit);
+                x = parseFloat(x - limit);
                 this.render(x, startY + zeroThrow(((x - startX) * (originY - startY)), (originX - startX)));
             }.bind(this));
         } else {
@@ -183,12 +182,12 @@ export default class BottomRight extends Base {
      * @param pointY
      */
     render(pointX:number, pointY:number):void {
-        this.motion.direction = this.card.direction = BOTTOM_RIGHT;
+        this.motion.direction = this.card.direction = BOTTOM_LEFT;
         const [originX, originY] = this.originPosition;
         const {width, height, padding} = this.masterStage;
 
         /* 碰到邊界 */
-        pointX = Math.min(pointX, originX - 1);
+        pointX = Math.max(pointX, originX + 1);
         pointY = Math.min(pointY, originY - 1);
 
         const {sizeLeft, sizeRight} = sizeBetweenPoints(pointX, originX, pointY, originY);
@@ -214,22 +213,22 @@ export default class BottomRight extends Base {
         if (sizeRight > (height - (2 * padding))) {
             const {mirrorX, mirrorY} = mirrorPosition(originX, padding);
             /*
-             * 生成右四邊形路徑
-             * A - - - - B - - C
-             * |         |     |
-             * |         |     |
-             * |         |     |
-             * |         |     |
-             * |         |     |
-             * |         |     |
-             * D - - - - E - - F
+             * 生成左四邊形路徑
+             * A - - B - - - - C
+             * |     |         |
+             * |     |         |
+             * |     |         |
+             * |     |         |
+             * |     |         |
+             * |     |         |
+             * D - - E - - - - F
              *
              * positionData
              * --
-             * TOP_LEFT     = B
-             * TOP_RIGHT    = C
-             * BOTTOM_RIGHT = F
-             * BOTTOM_LEFT  = E
+             * TOP_LEFT     = A
+             * TOP_RIGHT    = B
+             * BOTTOM_RIGHT = E
+             * BOTTOM_LEFT  = D
              *
              * cardPositionData
              * --
@@ -239,20 +238,20 @@ export default class BottomRight extends Base {
              * TOP_RIGHT    = C
              */
             /* 移動區元件 */
-            positionData[TOP_LEFT] = [mirrorX, mirrorY];
-            positionData[TOP_RIGHT] = getIntersectPosition(0, 1, padding);
-            positionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
-            positionData[BOTTOM_LEFT] = [pointX, pointY];
+            positionData[TOP_LEFT] = getIntersectPosition(0, 1, originX);
+            positionData[TOP_RIGHT] = [mirrorX, mirrorY];
+            positionData[BOTTOM_RIGHT] = [pointX, pointY];
+            positionData[BOTTOM_LEFT] = getIntersectPosition(0, 1, originY);
             positionData[ANOTHER_POS] = [];
             /* 卡片元件 */
-            cardPositionData[TOP_LEFT] = [padding, padding];
-            cardPositionData[BOTTOM_LEFT] = [padding, originY];
-            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
+            cardPositionData[TOP_LEFT] = getIntersectPosition(0, 1, originX);
+            cardPositionData[BOTTOM_LEFT] = getIntersectPosition(0, 1, originY);
+            cardPositionData[BOTTOM_RIGHT] = [width - padding, originY];
             cardPositionData[ANOTHER_POS] = [];
-            cardPositionData[TOP_RIGHT] = getIntersectPosition(0, 1, padding);
+            cardPositionData[TOP_RIGHT] = [width - padding, padding];
         }
         else if (sizeLeft > (width - (2 * padding))) {
-            const {mirrorX, mirrorY} = mirrorPosition(padding, originY);
+            const {mirrorX, mirrorY} = mirrorPosition(width - padding, originY);
             /*
              * 生成下四邊形路徑
              * A - - - - - - - - - B
@@ -276,19 +275,20 @@ export default class BottomRight extends Base {
              * BOTTOM_RIGHT = F
              * TOP_RIGHT    = B
              */
+
             /* 移動區元件 */
-            positionData[TOP_LEFT] = getIntersectPosition(1, 0, originX);
-            positionData[TOP_RIGHT] = getIntersectPosition(1, 0, padding);
-            positionData[BOTTOM_RIGHT] = [mirrorX, mirrorY];
-            positionData[BOTTOM_LEFT] = [pointX, pointY];
+            positionData[TOP_LEFT] = getIntersectPosition(1, 0, originY);
+            positionData[TOP_RIGHT] = getIntersectPosition(1, 0, originX);
+            positionData[BOTTOM_RIGHT] = [pointX, pointY];
+            positionData[BOTTOM_LEFT] = [mirrorX, mirrorY];
             positionData[ANOTHER_POS] = [];
 
             /* 卡片元件 */
-            cardPositionData[TOP_LEFT] = [padding, padding];
-            cardPositionData[BOTTOM_LEFT] = getIntersectPosition(1, 0, padding);
-            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(1, 0, originX);
+            cardPositionData[TOP_LEFT] = [originX, padding];
+            cardPositionData[BOTTOM_LEFT] = getIntersectPosition(1, 0, originX);
+            cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(1, 0, originY);
             cardPositionData[ANOTHER_POS] = [];
-            cardPositionData[TOP_RIGHT] = [originX, padding];
+            cardPositionData[TOP_RIGHT] = [width - padding, padding];
         } else {
             /*
              * 生成三角形路徑
@@ -296,38 +296,38 @@ export default class BottomRight extends Base {
              * |                   |
              * |                   |
              * |                   |
-             * |           C - - - D
-             * |           |    /
-             * |           |  /
-             * E - - - - - F
+             * C - - - D           |
+             *  ＼    |           |
+             *    ＼  |           |
+             *        E - - - - -  F
              *
              * positionData
              * --
-             * TOP_LEFT     = D
-             * BOTTOM_RIGHT = F
-             * BOTTOM_LEFT  = C
+             * TOP_RIGHT    = C
+             * BOTTOM_RIGHT = D
+             * BOTTOM_LEFT  = E
              *
              * cardPositionData
              * --
              * TOP_LEFT     = A
-             * BOTTOM_LEFT  = E
-             * BOTTOM_RIGHT = F
-             * ANOTHER_POS  = D
+             * BOTTOM_LEFT  = C
+             * BOTTOM_RIGHT = E
+             * ANOTHER_POS  = F
              * TOP_RIGHT    = B
              */
             /* 移動區元件 */
-            positionData[TOP_LEFT] = getIntersectPosition(1, 0, originX);
-            positionData[TOP_RIGHT] = [];
-            positionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
-            positionData[BOTTOM_LEFT] = [pointX, pointY];
+            positionData[TOP_LEFT] = [];
+            positionData[TOP_RIGHT] = getIntersectPosition(1, 0, originX);
+            positionData[BOTTOM_RIGHT] = [pointX, pointY];
+            positionData[BOTTOM_LEFT] = getIntersectPosition(0, 1, originY);
             positionData[ANOTHER_POS] = [];
 
             /* 卡片元件 */
-            cardPositionData[TOP_LEFT] = [padding, padding];
-            cardPositionData[BOTTOM_LEFT] = [padding, originY];
+            cardPositionData[TOP_LEFT] = [originX, padding];
+            cardPositionData[BOTTOM_LEFT] = getIntersectPosition(1, 0, originX);
             cardPositionData[BOTTOM_RIGHT] = getIntersectPosition(0, 1, originY);
-            cardPositionData[ANOTHER_POS] = getIntersectPosition(1, 0, originX);
-            cardPositionData[TOP_RIGHT] = [originX, padding];
+            cardPositionData[ANOTHER_POS] = [width - padding, originY];
+            cardPositionData[TOP_RIGHT] = [width - padding, padding];
         }
         /* 呼叫繪製 */
         this.card.update(cardPositionData[TOP_LEFT], cardPositionData[TOP_RIGHT], cardPositionData[BOTTOM_RIGHT], cardPositionData[BOTTOM_LEFT], cardPositionData[ANOTHER_POS]);

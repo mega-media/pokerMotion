@@ -16,7 +16,8 @@ export default class Base {
     motion:Motion;
     interval:?number;
     motionFlag:boolean;
-
+    finishCallback:any;
+    
     constructor(masterStage:Object, card:Card, motion:Motion) {
         this.masterStage = masterStage;
         this.card = card;
@@ -104,12 +105,9 @@ export default class Base {
     finishInterval():void {
         if (this.interval)
             clearInterval(this.interval);
-
-        this.card.remove();
-        this.motion.finish();
-        this.motionFlag = false;
+        
         /* callback */
-        this.masterStage.dragFinishCallback();
+        this.finishCallback.call(this);
     }
     
     /**

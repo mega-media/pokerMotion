@@ -1,15 +1,22 @@
 /**
  * Created by arShown on 2016/6/7.
- * Updated on 2017/3/8.
+ * Updated on 2017/3/14
  */
-import {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, ANOTHER_POS, CARD_IMAGE} from '../Constants/Constants';
+import {
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_RIGHT,
+    BOTTOM_LEFT,
+    ANOTHER_POS,
+    CARD_IMAGE
+} from '../Constants/Constants';
 
 export default class Card {
     masterStage:Object;
     positions:{
         [key:string]:Array<number>
     };
-    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT");
+    direction:?("TOP_LEFT" | "TOP_RIGHT" | "BOTTOM_RIGHT" | "BOTTOM_LEFT" | "TOP" | "RIGHT" | "BOTTOM" | "LEFT");
     selfStage:?Object;
 
     constructor(masterStage:Object) {
@@ -47,46 +54,27 @@ export default class Card {
         this.render();
     }
 
-    _getKeySort():Array<string> {
-        let keySort = [];
-        switch (this.direction) {
-            case BOTTOM_RIGHT:
-                keySort = [
-                    TOP_LEFT,
-                    BOTTOM_LEFT,
-                    BOTTOM_RIGHT,
-                    ANOTHER_POS,
-                    TOP_RIGHT
-                ];
-                break;
-            default:
-                keySort = [
-                    TOP_LEFT,
-                    BOTTOM_LEFT,
-                    BOTTOM_RIGHT,
-                    TOP_RIGHT
-                ];
-                break;
-        }
-        return keySort;
-    }
-
     render():void {
-        const {padding} = this.masterStage;
+        const {width, height, padding} = this.masterStage;
         /* 卡牌元件 */
         if (!this.selfStage) {
-            this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE);
-            this.selfStage.width = this.masterStage.width - (2 * padding);
-            this.selfStage.height = this.masterStage.height - (2 * padding);
+            this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE, 12);
+            this.selfStage.width = width - (2 * padding);
+            this.selfStage.height = height - (2 * padding);
         }
         const stage:Object = this.selfStage;
         stage.mask = null;
         /* 遮罩 */
         if (Object.keys(this.positions).length) {
             const pokerMask = new Phaser.Graphics(this.masterStage);
-            let keySort = this._getKeySort();
             let firstPos = [];
-            keySort.map(key => {
+            [
+                TOP_LEFT,
+                BOTTOM_LEFT,
+                BOTTOM_RIGHT,
+                ANOTHER_POS,
+                TOP_RIGHT
+            ].map(key => {
                 let pos = this.positions[key];
                 if (pos.length) {
                     if (firstPos.length === 0) {
@@ -102,7 +90,7 @@ export default class Card {
         }
     }
 
-    remove(){
+    remove() {
         this.masterStage.world.remove(this.selfStage);
         this.selfStage = null;
     }

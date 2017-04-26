@@ -103,14 +103,14 @@ export default class Top extends Base {
         /* parent */
         super.openMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(bottomY - y, 100));
-        this.bindInterval(function () {
+        const limit = Math.abs(zeroThrow(bottomY - y, 50));
+        this.bindInterval(() => {
             if (y >= bottomY) {
                 return this.finishInterval();
             }
             y = parseFloat(y + limit);
             this.render(y);
-        }.bind(this));
+        });
     }
 
     /**
@@ -122,8 +122,7 @@ export default class Top extends Base {
             return null;
         }
         this.motionFlag = false;
-
-        const {bottomY, originY} = this.originPosition;
+        const {originY} = this.originPosition;
         /*
          * 放開時的座標
          */
@@ -133,15 +132,15 @@ export default class Top extends Base {
 
         /* parent */
         super.resetMotion({x, y});
+        const limit = Math.abs(zeroThrow(y - originY, 50));
 
-        const limit = Math.abs(zeroThrow(bottomY - originY, 100));
-        this.bindInterval(function () {
+        this.bindInterval(() => {
             if (y <= originY) {
                 return this.restoreInterval();
             }
             y = parseFloat(y - limit);
             this.render(y);
-        }.bind(this));
+        });
     }
 
     /**

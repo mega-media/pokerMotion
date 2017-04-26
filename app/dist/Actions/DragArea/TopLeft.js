@@ -95,31 +95,31 @@ export default class TopLeft extends Base {
         const [startX, startY] = [x, y],
             sizeX = Math.abs(originX - startX),
             sizeY = Math.abs(originY - startY),
-            intervalLimit = 100;
+            intervalLimit = 50;
 
         /* 判斷展開方向 */
         if (sizeX >= sizeY) {
             /* 往右 */
             const endX = width - padding,
                 limit = Math.abs(zeroThrow(endX - startX, intervalLimit));
-            this.bindInterval(function () {
+            this.bindInterval(() => {
                 if (x >= endX) {
                     return this.finishInterval();
                 }
                 x = parseFloat(x + limit);
                 this.render(x, Math.max(originY, startY - zeroThrow(((x - startX) * (originY - startY)), (startX - endX))));
-            }.bind(this));
+            });
         } else {
             /* 往下 */
             const endY = height - padding,
                 limit = Math.abs(zeroThrow(endY - startY, intervalLimit));
-            this.bindInterval(function () {
+            this.bindInterval(() => {
                 if (y >= endY) {
                     return this.finishInterval();
                 }
                 y = parseFloat(y + limit);
                 this.render(Math.max(originX, startX - zeroThrow(((y - startY) * (originX - startX)), (startY - endY))), y);
-            }.bind(this));
+            });
         }
     }
 
@@ -148,7 +148,7 @@ export default class TopLeft extends Base {
         const [startX, startY] = [x, y],
             sizeX = Math.abs(originX - startX),
             sizeY = Math.abs(originY - startY),
-            intervalLimit = 100,
+            intervalLimit = 50,
             endX = originX,
             endY = originY;
 
@@ -156,23 +156,23 @@ export default class TopLeft extends Base {
         if (sizeX >= sizeY) {
             /* 往左 */
             const limit = Math.abs(zeroThrow(sizeX, intervalLimit));
-            this.bindInterval(function () {
+            this.bindInterval(() => {
                 if (x <= endX) {
                     return this.restoreInterval();
                 }
                 x = parseFloat(x - limit);
                 this.render(x, startY + zeroThrow(((x - startX) * (originY - startY)), (originX - startX)));
-            }.bind(this));
+            });
         } else {
             /* 往上 */
             const limit = Math.abs(zeroThrow(sizeY, intervalLimit));
-            this.bindInterval(function () {
+            this.bindInterval(() => {
                 if (y <= endY) {
                     return this.restoreInterval();
                 }
                 y = parseFloat(y - limit);
                 this.render(startX + zeroThrow(((y - startY) * (originX - startX)), (originY - startY)), y);
-            }.bind(this));
+            });
         }
     }
 

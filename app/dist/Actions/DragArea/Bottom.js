@@ -37,7 +37,7 @@ export default class Bottom extends Base {
         const {width, height, padding} = masterStage;
         this.originPosition = {
             topY: padding,
-            originY: height - padding, 
+            originY: height - padding,
             leftX: padding,
             rightX: width - padding
         };
@@ -102,14 +102,14 @@ export default class Bottom extends Base {
         /* parent */
         super.openMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(topY - y, 100));
-        this.bindInterval(function () {
+        const limit = Math.abs(zeroThrow(topY - y, 50));
+        this.bindInterval(() => {
             if (y <= topY) {
                 return this.finishInterval();
             }
             y = parseFloat(y - limit);
             this.render(y);
-        }.bind(this));
+        });
 
     }
 
@@ -122,7 +122,7 @@ export default class Bottom extends Base {
             return null;
         }
         this.motionFlag = false;
-        const {topY, originY} = this.originPosition;
+        const {originY} = this.originPosition;
         /*
          * 放開時的座標
          */
@@ -133,15 +133,14 @@ export default class Bottom extends Base {
         /* parent */
         super.resetMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(originY - topY, 100));
-        this.bindInterval(function () {
+        const limit = Math.abs(zeroThrow(originY - y, 50));
+        this.bindInterval(() => {
             if (y >= originY) {
                 return this.restoreInterval();
             }
             y = parseFloat(y + limit);
             this.render(y);
-        }.bind(this));
-
+        });
     }
 
     /**

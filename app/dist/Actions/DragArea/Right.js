@@ -95,14 +95,14 @@ export default class Right extends Base {
         /* parent */
         super.openMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(leftX - x, 100));
-        this.bindInterval(function () {
+        const limit = Math.abs(zeroThrow(leftX - x, 50));
+        this.bindInterval(() => {
             if (x <= leftX) {
                 return this.finishInterval();
             }
             x = parseFloat(x - limit);
             this.render(x);
-        }.bind(this));
+        });
 
     }
 
@@ -127,14 +127,14 @@ export default class Right extends Base {
         /* parent */
         super.resetMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(originX - x, 100));
-        this.bindInterval(function () {
+        const limit = Math.abs(zeroThrow(originX - x, 50));
+        this.bindInterval(() => {
             if (x >= originX) {
                 return this.restoreInterval();
             }
             x = parseFloat(x + limit);
             this.render(x);
-        }.bind(this));
+        });
 
     }
 

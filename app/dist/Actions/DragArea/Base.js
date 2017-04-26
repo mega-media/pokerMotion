@@ -17,7 +17,7 @@ export default class Base {
     interval:?number;
     motionFlag:boolean;
     finishCallback:any;
-    
+
     constructor(masterStage:Object, card:Card, motion:Motion) {
         this.masterStage = masterStage;
         this.card = card;
@@ -70,7 +70,7 @@ export default class Base {
      * @param handler
      */
     bindInterval(handler:() => any):void {
-        this.interval = setInterval(handler, 1);
+        this.interval = setInterval(handler, 0);
     }
 
     /**
@@ -105,11 +105,11 @@ export default class Base {
     finishInterval():void {
         if (this.interval)
             clearInterval(this.interval);
-        
+
         /* callback */
         this.finishCallback.call(this);
     }
-    
+
     /**
      * 兩線相交的點，過濾重複使用的參數
      * @param unSlope 斜率

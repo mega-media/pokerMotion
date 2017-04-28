@@ -1,13 +1,13 @@
 /**
  * Created by arShown on 2016/6/7.
- * Updated on 2017/3/14
+ * Updated on 2017/4/28
  */
 import {
     TOP_LEFT,
-    TOP_RIGHT,
-    BOTTOM_RIGHT,
     BOTTOM_LEFT,
+    BOTTOM_RIGHT,
     ANOTHER_POS,
+    TOP_RIGHT,
     CARD_IMAGE
 } from '../Constants/Constants';
 
@@ -26,18 +26,28 @@ export default class Card {
         this.selfStage = null;
     }
 
+    get originPosition():Object {
+        const {element:{width, height, masterSize}} = this.masterStage;
+        return {
+            POS_TOP_LEFT: [(masterSize - width) / 2, (masterSize - height) / 2],
+            POS_TOP_RIGHT: [(masterSize + width) / 2, (masterSize - height) / 2],
+            POS_BOTTOM_RIGHT: [(masterSize + width) / 2, (masterSize + height) / 2],
+            POS_BOTTOM_LEFT: [(masterSize - width) / 2, (masterSize + height) / 2]
+        }
+    }
+
     restore():void {
         this.positions = {};
         this.initialize();
     }
 
     initialize():void {
-        const {padding} = this.masterStage;
+        const {POS_TOP_LEFT, POS_TOP_RIGHT, POS_BOTTOM_RIGHT, POS_BOTTOM_LEFT} = this.originPosition;
         this.positions = {
-            TOP_LEFT: [padding, padding],
-            TOP_RIGHT: [this.masterStage.width - padding, padding],
-            BOTTOM_RIGHT: [this.masterStage.width - padding, this.masterStage.height - padding],
-            BOTTOM_LEFT: [padding, this.masterStage.height - padding],
+            TOP_LEFT: POS_TOP_LEFT,
+            TOP_RIGHT: POS_TOP_RIGHT,
+            BOTTOM_RIGHT: POS_BOTTOM_RIGHT,
+            BOTTOM_LEFT: POS_BOTTOM_LEFT,
             ANOTHER_POS: []
         };
         this.render();
@@ -55,12 +65,13 @@ export default class Card {
     }
 
     render():void {
-        const {width, height, padding} = this.masterStage;
+        const {element:{width, height, masterSize}, direction} = this.masterStage;
         /* 卡牌元件 */
         if (!this.selfStage) {
-            this.selfStage = this.masterStage.add.sprite(padding, padding, CARD_IMAGE, 12);
-            this.selfStage.width = width - (2 * padding);
-            this.selfStage.height = height - (2 * padding);
+            const {POS_TOP_LEFT} = this.originPosition;
+            this.selfStage = this.masterStage.add.sprite(POS_TOP_LEFT[0], POS_TOP_LEFT[1], CARD_IMAGE, direction === "v" ? 12 : 0);
+            this.selfStage.width = width;
+            this.selfStage.height = height;
         }
         const stage:Object = this.selfStage;
         stage.mask = null;

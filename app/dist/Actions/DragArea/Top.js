@@ -34,12 +34,13 @@ export default class Top extends Base {
         super(masterStage, card, motion);
 
         /* 基準點：上 */
-        const {width, height, padding} = masterStage;
+        const {originPosition:{POS_TOP_LEFT, POS_TOP_RIGHT, POS_BOTTOM_LEFT}} = card;
+        const {element:{width, height, padding}} = masterStage;
         this.originPosition = {
-            bottomY: height - padding,
-            originY: padding,
-            leftX: padding,
-            rightX: width - padding
+            bottomY: POS_BOTTOM_LEFT[1],
+            originY: POS_TOP_RIGHT[1],
+            leftX: POS_TOP_LEFT[0],
+            rightX: POS_TOP_RIGHT[0]
         };
     }
 
@@ -48,11 +49,11 @@ export default class Top extends Base {
      * @returns {*}
      */
     getTriggerArea():Object {
-        const {width, height, padding} = this.masterStage;
+        const {element:{width, height}} = this.masterStage;
         const {originY, leftX} = this.originPosition;
-        const areaSizeWidthBlock = parseInt((width - 2 * padding) / 4),
-            areaSizeWidth = width - 2 * (padding + areaSizeWidthBlock),
-            areaSizeHeight = parseInt((height - 2 * padding) / 6);
+        const areaSizeWidthBlock = parseInt(width / 4),
+            areaSizeWidth = width - 2 * (areaSizeWidthBlock),
+            areaSizeHeight = parseInt(height / 6);
         return super.getTriggerArea(areaSizeWidth, areaSizeHeight, leftX + (areaSizeWidth / 2) + areaSizeWidthBlock, originY + (areaSizeHeight / 2));
     }
 
@@ -60,8 +61,8 @@ export default class Top extends Base {
      * 檢查是不是符合開牌範圍
      */
     isTimeToOpen(pointer:Object):boolean {
-        const {height} = this.masterStage;
-        return pointer.y >= (height / 3 * 2);
+        const {element:{height}} = this.masterStage;
+        return pointer.y >= (this.originPosition.bottomY - height / 3);
     }
 
     /**

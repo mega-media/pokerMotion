@@ -35,12 +35,12 @@ export default class Motion {
     }
 
     finish():void {
-        const {padding} = this.masterStage;
+        const {element:{width, height, masterSize}} = this.masterStage;
         this.positions = {
-            TOP_LEFT: [padding, padding],
-            TOP_RIGHT: [this.masterStage.width - padding, padding],
-            BOTTOM_RIGHT: [this.masterStage.width - padding, this.masterStage.height - padding],
-            BOTTOM_LEFT: [padding, this.masterStage.height - padding],
+            TOP_LEFT: [(masterSize - width) / 2, (masterSize - height) / 2],
+            TOP_RIGHT: [(masterSize + width) / 2, (masterSize - height) / 2],
+            BOTTOM_RIGHT: [(masterSize + width) / 2, (masterSize + height) / 2],
+            BOTTOM_LEFT: [(masterSize - width) / 2, (masterSize + height) / 2],
             ANOTHER_POS: []
         };
         this.direction = null;
@@ -94,10 +94,10 @@ export default class Motion {
 
         /* 元件 */
         if (!this.selfStage) {
-            const {padding} = this.masterStage;
-            this.selfStage = this.masterStage.add.sprite(padding, padding, status === "opened" ? CARD_IMAGE : MOTION_IMAGE, this.cardIndex);
-            this.selfStage.width = this.masterStage.width - (2 * padding);
-            this.selfStage.height = this.masterStage.height - (2 * padding);
+            const {element:{width, height, masterSize}} = this.masterStage;
+            this.selfStage = this.masterStage.add.sprite((masterSize - width) / 2, (masterSize - height) / 2, status === "opened" ? CARD_IMAGE : MOTION_IMAGE, this.cardIndex);
+            this.selfStage.width = width;
+            this.selfStage.height = height;
         }
         this.selfStage = Object.assign(this.selfStage, maskSprite);
         this.selfStage.mask = pokerMask;
@@ -105,28 +105,49 @@ export default class Motion {
     }
 
     getCardIndex():number {
-        const {cardCode} = this.masterStage;
+        const {cardCode, direction} = this.masterStage;
         const color = cardCode.charAt(0);
         const number = parseInt(cardCode.slice(1, cardCode.length)) - 1;
         let code = 0;
         if (number <= 13 && number >= 0) {
-            switch (color) {
-                case "S":
-                    /* 黑桃 */
-                    code = (12 - number) + 4 * 13;
-                    break;
-                case "H":
-                    /* 紅心 */
-                    code = (12 - number) + 3 * 13;
-                    break;
-                case "D":
-                    /* 方塊 */
-                    code = (12 - number) + 13;
-                    break;
-                case "C":
-                    /* 梅花 */
-                    code = (12 - number) + 2 * 13;
-                    break;
+            if (direction === "v") {
+                switch (color) {
+                    case "S":
+                        /* 黑桃 */
+                        code = (12 - number) + 4 * 13;
+                        break;
+                    case "H":
+                        /* 紅心 */
+                        code = (12 - number) + 3 * 13;
+                        break;
+                    case "D":
+                        /* 方塊 */
+                        code = (12 - number) + 13;
+                        break;
+                    case "C":
+                        /* 梅花 */
+                        code = (12 - number) + 2 * 13;
+                        break;
+                }
+            } else {
+                switch (color) {
+                    case "S":
+                        /* 黑桃 */
+                        code = 4 + 5 * number;
+                        break;
+                    case "H":
+                        /* 紅心 */
+                        code = 3 + 5 * number;
+                        break;
+                    case "D":
+                        /* 方塊 */
+                        code = 1 + 5 * number;
+                        break;
+                    case "C":
+                        /* 梅花 */
+                        code = 2 + 5 * number;
+                        break;
+                }
             }
         }
         return code;
@@ -203,10 +224,10 @@ export default class Motion {
                 sprite.anchorY = 1;
                 break;
             default:
-                const {padding} = this.masterStage;
+                const {element:{width, height, masterSize}} = this.masterStage;
                 sprite.angle = 0;
-                sprite.x = padding;
-                sprite.y = padding;
+                sprite.x = (masterSize - width) / 2;
+                sprite.y = (masterSize - height) / 2;
                 sprite.anchorX = 0;
                 sprite.anchorY = 0;
                 break;

@@ -34,12 +34,12 @@ export default class Bottom extends Base {
         super(masterStage, card, motion);
 
         /* 基準點：下 */
-        const {width, height, padding} = masterStage;
+        const {originPosition:{POS_BOTTOM_LEFT, POS_TOP_RIGHT, POS_BOTTOM_RIGHT}} = card;
         this.originPosition = {
-            topY: padding,
-            originY: height - padding,
-            leftX: padding,
-            rightX: width - padding
+            topY: POS_TOP_RIGHT[1],
+            originY: POS_BOTTOM_RIGHT[1],
+            leftX: POS_BOTTOM_LEFT[0],
+            rightX: POS_BOTTOM_RIGHT[0]
         };
     }
 
@@ -48,12 +48,12 @@ export default class Bottom extends Base {
      * @returns {*}
      */
     getTriggerArea():Object {
-        const {width, height, padding} = this.masterStage;
+        const {element:{width, height}} = this.masterStage;
         const {originY, leftX} = this.originPosition;
 
-        const areaSizeWidthBlock = parseInt((width - 2 * padding) / 4),
-            areaSizeWidth = width - 2 * (padding + areaSizeWidthBlock),
-            areaSizeHeight = parseInt((height - 2 * padding) / 6);
+        const areaSizeWidthBlock = parseInt(width / 4),
+            areaSizeWidth = width - 2 * areaSizeWidthBlock,
+            areaSizeHeight = parseInt(height / 6);
         return super.getTriggerArea(areaSizeWidth, areaSizeHeight, leftX + (areaSizeWidth / 2) + areaSizeWidthBlock, originY - (areaSizeHeight / 2));
     }
 
@@ -61,8 +61,8 @@ export default class Bottom extends Base {
      * 檢查是不是符合開牌範圍
      */
     isTimeToOpen(pointer:Object):boolean {
-        const {height} = this.masterStage;
-        return pointer.y <= (height / 3);
+        const {element:{height}} = this.masterStage;
+        return pointer.y <= (this.originPosition.topY + (height / 3));
     }
 
     /**

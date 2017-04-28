@@ -23,17 +23,24 @@ window.onload = function () {
     game.parentElementId = "container";
     game.width = 420;
     game.height = 545;
-    game.padding = 30;
+    game.direction = "v";
+    game.padding = 80;
     game.backgroundColor = "#000000";
     const openEle = document.getElementById("open");
     openEle && openEle.addEventListener('click', game.finish.bind(game));
+
+    const turnEle = document.getElementById("turn");
+    turnEle && turnEle.addEventListener('click', () => {
+        game.turn();
+    });
+
     const resetEle = document.getElementById("reset");
     resetEle && resetEle.addEventListener('click', () => {
         game.destroy();
         game.cardCode = randomCard();
-        console.log(game.cardCode);
         game.start();
     });
+
     const msgEle:any = document.getElementById("msg");
     let from = "", to = "", status = "";
     const setMeg = () => {

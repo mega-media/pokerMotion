@@ -109,7 +109,7 @@ export default class Poker {
     turn():void {
         if (this.status === "pending") {
             this.status = "moving";
-            this.phaserGame.state.restart(true, false, "turn", {
+            this.phaserGame.state.start("mainStage", false, false, "turn", {
                 direction: this.direction,
                 element: this._getElementParamsByDirection(this.direction)
             });
@@ -117,11 +117,11 @@ export default class Poker {
             this.direction = netDirection;
 
             setTimeout(() => {
-                this.phaserGame.state.restart(true, false, "default", {
+                this.phaserGame.state.start("mainStage", false, false, "default", {
                     direction: netDirection,
                     element: this._getElementParamsByDirection(netDirection)
                 });
-            }, 800);
+            }, 500);
         }
     }
 

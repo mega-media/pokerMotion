@@ -98,14 +98,14 @@ export default class BottomRight extends Base {
 
         const [startX, startY] = [x, y],
             sizeX = Math.abs(originX - startX),
-            sizeY = Math.abs(originY - startY),
-            intervalLimit = 50;
+            sizeY = Math.abs(originY - startY);
+
 
         /* 判斷展開方向 */
         if (sizeX >= sizeY) {
             /* 往左 */
             const endX = POS_TOP_LEFT[0],
-                limit = Math.abs(zeroThrow(endX - startX, intervalLimit));
+                limit = Math.abs(zeroThrow(endX - startX, this.intervalLimit));
             this.bindInterval(() => {
                 if (x <= endX) {
                     return this.finishInterval();
@@ -116,7 +116,7 @@ export default class BottomRight extends Base {
         } else {
             /* 往上 */
             const endY = POS_TOP_LEFT[1],
-                limit = Math.abs(zeroThrow(endY - startY, intervalLimit));
+                limit = Math.abs(zeroThrow(endY - startY, this.intervalLimit));
             this.bindInterval(() => {
                 if (y <= endY) {
                     return this.finishInterval();
@@ -152,14 +152,13 @@ export default class BottomRight extends Base {
         const [startX, startY] = [x, y],
             sizeX = originX - startX,
             sizeY = originY - startY,
-            intervalLimit = 50,
             endX = originX,
             endY = originY;
 
         //重置
         if (sizeX >= sizeY) {
             /* 往右 */
-            const limit = Math.abs(zeroThrow(sizeX, intervalLimit));
+            const limit = Math.abs(zeroThrow(sizeX, this.intervalLimit));
             this.bindInterval(() => {
                 if (x >= endX) {
                     return this.restoreInterval();
@@ -169,7 +168,7 @@ export default class BottomRight extends Base {
             });
         } else {
             /* 往下 */
-            const limit = Math.abs(zeroThrow(sizeY, intervalLimit));
+            const limit = Math.abs(zeroThrow(sizeY, this.intervalLimit));
             this.bindInterval(() => {
                 if (y >= endY) {
                     return this.restoreInterval();

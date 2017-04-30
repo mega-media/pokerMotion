@@ -21,8 +21,8 @@ window.onload = function () {
      */
     game.cardCode = randomCard();
     game.parentElementId = "container";
-    game.width = 420;
-    game.height = 545;
+    game.width = 360;
+    game.height = 485;
     game.direction = "v";
     game.padding = 80;
     game.backgroundColor = "#000000";

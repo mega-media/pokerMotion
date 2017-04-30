@@ -128,4 +128,13 @@ export default class DragAction {
             this.resetMotion = null;
         }
     }
+
+    /**
+     * 清掉所有方塊
+     */
+    restore() {
+        this.dragArea.forEach(sprite => {
+            sprite.destroy();
+        });
+    }
 }

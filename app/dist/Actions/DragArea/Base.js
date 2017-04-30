@@ -17,6 +17,7 @@ export default class Base {
     interval:?number;
     motionFlag:boolean;
     finishCallback:any;
+    intervalLimit:number;
 
     constructor(masterStage:Object, card:Card, motion:Motion) {
         this.masterStage = masterStage;
@@ -24,6 +25,7 @@ export default class Base {
         this.motion = motion;
         this.interval = null;
         this.motionFlag = true;
+        this.intervalLimit = 50;
     }
 
     /**

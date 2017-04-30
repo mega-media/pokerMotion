@@ -102,7 +102,7 @@ export default class Bottom extends Base {
         /* parent */
         super.openMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(topY - y, 50));
+        const limit = Math.abs(zeroThrow(topY - y, this.intervalLimit));
         this.bindInterval(() => {
             if (y <= topY) {
                 return this.finishInterval();
@@ -133,7 +133,7 @@ export default class Bottom extends Base {
         /* parent */
         super.resetMotion({x, y});
 
-        const limit = Math.abs(zeroThrow(originY - y, 50));
+        const limit = Math.abs(zeroThrow(originY - y, this.intervalLimit));
         this.bindInterval(() => {
             if (y >= originY) {
                 return this.restoreInterval();

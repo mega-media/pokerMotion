@@ -16,6 +16,7 @@ export default class MainStage {
     motion:?Motion;
     card:?Card;
     dragAction:?DragAction;
+    callback:?any;
 
     constructor(masterStage:Object) {
         this.masterStage = masterStage;
@@ -23,11 +24,14 @@ export default class MainStage {
         this.motion = null;
         this.card = null;
         this.dragAction = null;
+        this.callback = null;
     }
 
     init(effect:EffectType = "default", params:Object = {}) {
         this.effect = effect;
         Object.assign(this.masterStage, params);
+        if("tweenCallback" in params)
+            this.callback = params.tweenCallback;
     }
 
     /**
@@ -90,9 +94,10 @@ export default class MainStage {
             CardStage.x = masterSize / 2;
             CardStage.y = masterSize / 2;
             CardStage.anchor.setTo(0.5, 0.5);
-            this.masterStage.add.tween(CardStage).to({
+            const tween = this.masterStage.add.tween(CardStage).to({
                 angle: 90
             }, 500, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(this.callback);
         }
     }
 }

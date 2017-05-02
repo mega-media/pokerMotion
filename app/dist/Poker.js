@@ -117,19 +117,18 @@ export default class Poker {
     turn():void {
         if (this.enabled && this.status === "pending") {
             this.status = "moving";
+            const netDirection = this.direction === "v" ? "h" : "v"
             this.phaserGame.state.start("mainStage", false, false, "turn", {
                 direction: this.direction,
-                element: this._getElementParamsByDirection(this.direction)
+                element: this._getElementParamsByDirection(this.direction),
+                tweenCallback: () => {
+                    this.phaserGame.state.start("mainStage", false, false, "default", {
+                        direction: netDirection,
+                        element: this._getElementParamsByDirection(netDirection)
+                    });
+                }
             });
-            const netDirection = this.direction === "v" ? "h" : "v"
             this.direction = netDirection;
-
-            setTimeout(() => {
-                this.phaserGame.state.start("mainStage", false, false, "default", {
-                    direction: netDirection,
-                    element: this._getElementParamsByDirection(netDirection)
-                });
-            }, 500);
         }
     }
 

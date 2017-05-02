@@ -1,12 +1,24 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const phaserModule = path.join(__dirname, '/node_modules/phaser/');
+const phaser = path.join(phaserModule, 'build/phaser.min.js');
+
 const config = {
-    entry: [
-        path.resolve(__dirname, 'app/main.js')
-    ],
+    entry: {
+        "poker.min": [
+            path.resolve(__dirname, 'app/main.js')
+        ],
+        "vendor.min":[
+            'phaser'
+        ]
+    },
     module: {
         loaders: [
+            {
+                test: /phaser/,
+                loader: 'script'
+            },
             {
                 test: /\.js$/,
                 loaders: ['babel'],
@@ -15,6 +27,9 @@ const config = {
         ]
     },
     resolve: {
+        alias: {
+            'phaser': phaser
+        },
         extensions: ['', '.js']
     },
     plugins: [
@@ -29,10 +44,7 @@ const config = {
         libraryTarget: 'umd',
         library: 'Poker',
         path: path.resolve(__dirname, 'release'),
-        filename: 'poker.min.js'
-    },
-    externals: {
-        Phaser: 'Phaser'
+        filename: '[name].js',
     }
 };
 module.exports = config;

@@ -2,7 +2,6 @@
  * Created by arShown on 2016/6/7.
  * Updated on 2017/4/28
  */
-import Phaser           from 'Phaser';
 import {
     TOP_LEFT,
     BOTTOM_LEFT,

@@ -24,6 +24,7 @@ window.onload = function () {
     game.width = 360;
     game.height = 485;
     game.direction = "v";
+    game.assertUrl = "assets/images"
     game.padding = 80;
     //game.enabled = false;
     game.backgroundColor = "#000000";

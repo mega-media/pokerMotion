@@ -10,9 +10,9 @@
     "mocha-test": "cross-env NODE_PATH=./app/dist NODE_ENV=test mocha --opts ./.mochaopts \"__test__/**/*.test.*\" || exit 0",
     "mocha-test:watch": "cross-env NODE_PATH=./app/dist NODE_ENV=test mocha --watch --opts ./.mochaopts \"__test__/**/*.test.*\"",
     "start": "cross-env NODE_ENV=development npm run build && webpack-dev-server --devtool eval --progress --colors --hot --content-base build",
-    "copy": "cp app/index.html build/index.html && cp -a app/assets/images/ build",
+    "copy": "cp app/index.html build/index.html && cp -a app/assets build",
     "build": "webpack && npm run copy",
-    "release": "cross-env NODE_ENV=production webpack -p --config ./webpack.prod.config.js && cp -a app/assets/images/ release/assets"
+    "release": "cross-env NODE_ENV=production webpack --display-modules --sort-modules-by size -p --config ./webpack.prod.config.js && cp -a app/assets release"
   },
   "author": "shown",
   "license": "ISC",

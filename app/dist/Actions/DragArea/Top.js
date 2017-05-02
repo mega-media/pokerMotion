@@ -35,7 +35,6 @@ export default class Top extends Base {
 
         /* 基準點：上 */
         const {originPosition:{POS_TOP_LEFT, POS_TOP_RIGHT, POS_BOTTOM_LEFT}} = card;
-        const {element:{width, height, padding}} = masterStage;
         this.originPosition = {
             bottomY: POS_BOTTOM_LEFT[1],
             originY: POS_TOP_RIGHT[1],

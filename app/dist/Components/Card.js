@@ -2,6 +2,7 @@
  * Created by arShown on 2016/6/7.
  * Updated on 2017/4/28
  */
+import Phaser           from 'Phaser';
 import {
     TOP_LEFT,
     BOTTOM_LEFT,
@@ -65,7 +66,7 @@ export default class Card {
     }
 
     render():void {
-        const {element:{width, height, masterSize}, direction} = this.masterStage;
+        const {element:{width, height}, direction} = this.masterStage;
         /* 卡牌元件 */
         if (!this.selfStage) {
             const {POS_TOP_LEFT} = this.originPosition;

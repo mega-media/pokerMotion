@@ -104,22 +104,20 @@ export default class BottomLeft extends Base {
             const endX = POS_TOP_RIGHT[0],
                 limit = Math.abs(zeroThrow(endX - startX, this.intervalLimit));
             this.bindInterval(() => {
-                if (x >= endX) {
-                    return this.finishInterval();
-                }
                 x = parseFloat(x + limit);
                 this.render(x, Math.min(originY, startY - zeroThrow(((x - startX) * (originY - startY)), (startX - endX))));
+                if (x >= endX)
+                    this.finishInterval();
             });
         } else {
             /* 往上 */
             const endY = POS_TOP_RIGHT[1],
                 limit = Math.abs(zeroThrow(endY - startY, this.intervalLimit));
             this.bindInterval(() => {
-                if (y <= endY) {
-                    return this.finishInterval();
-                }
                 y = parseFloat(y - limit);
                 this.render(Math.max(originX, startX - zeroThrow(((y - startY) * (originX - startX)), (startY - endY))), y);
+                if (y <= endY)
+                    this.finishInterval();
             });
         }
     }
@@ -157,21 +155,19 @@ export default class BottomLeft extends Base {
             /* 往左 */
             const limit = Math.abs(zeroThrow(sizeX, this.intervalLimit));
             this.bindInterval(() => {
-                if (x <= endX) {
-                    return this.restoreInterval();
-                }
                 x = parseFloat(x - limit);
                 this.render(x, startY + zeroThrow(((x - startX) * (originY - startY)), (originX - startX)));
+                if (x <= endX)
+                    this.restoreInterval();
             });
         } else {
             /* 往下 */
             const limit = Math.abs(zeroThrow(sizeY, this.intervalLimit));
             this.bindInterval(() => {
-                if (y >= endY) {
-                    return this.restoreInterval();
-                }
                 y = parseFloat(y + limit);
                 this.render(startX + zeroThrow(((y - startY) * (originX - startX)), (originY - startY)), y);
+                if (y >= endY)
+                    this.restoreInterval();
             });
         }
     }

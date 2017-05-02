@@ -25,7 +25,7 @@ export default class Base {
         this.motion = motion;
         this.interval = null;
         this.motionFlag = true;
-        this.intervalLimit = 50;
+        this.intervalLimit = 30;
     }
 
     /**
@@ -72,7 +72,7 @@ export default class Base {
      * @param handler
      */
     bindInterval(handler:() => any):void {
-        this.interval = setInterval(handler, 0);
+        this.interval = setInterval(handler, 10);
     }
 
     /**

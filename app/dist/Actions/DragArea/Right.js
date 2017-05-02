@@ -97,11 +97,10 @@ export default class Right extends Base {
 
         const limit = Math.abs(zeroThrow(leftX - x, this.intervalLimit));
         this.bindInterval(() => {
-            if (x <= leftX) {
-                return this.finishInterval();
-            }
             x = parseFloat(x - limit);
             this.render(x);
+            if (x <= leftX)
+                this.finishInterval();
         });
 
     }
@@ -129,11 +128,10 @@ export default class Right extends Base {
 
         const limit = Math.abs(zeroThrow(originX - x, this.intervalLimit));
         this.bindInterval(() => {
-            if (x >= originX) {
-                return this.restoreInterval();
-            }
             x = parseFloat(x + limit);
             this.render(x);
+            if (x >= originX)
+                this.restoreInterval();
         });
 
     }

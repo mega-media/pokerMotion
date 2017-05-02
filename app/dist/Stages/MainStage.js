@@ -59,9 +59,12 @@ export default class MainStage {
             this.card.initialize();
             /* 繪製移動區 */
             this.motion = new Motion(this.masterStage);
-            /* 啟動拖曳事件 */
+            /* 拖曳事件 */
             this.dragAction = new DragAction(this.masterStage, this.card, this.motion);
-            this.dragAction.startDragMotion();
+            if (this.masterStage.enabled) {
+                /* 啟動 */
+                this.dragAction.startDragMotion();
+            }
             /* 將開牌寫入 masterStage.finish */
             this.masterStage.finish = this.dragAction.finishDragMotion.bind(this.dragAction);
         } else {

@@ -106,11 +106,10 @@ export default class Top extends Base {
 
         const limit = Math.abs(zeroThrow(bottomY - y, this.intervalLimit));
         this.bindInterval(() => {
-            if (y >= bottomY) {
-                return this.finishInterval();
-            }
             y = parseFloat(y + limit);
             this.render(y);
+            if (y >= bottomY)
+                this.finishInterval();
         });
     }
 
@@ -136,11 +135,10 @@ export default class Top extends Base {
         const limit = Math.abs(zeroThrow(y - originY, this.intervalLimit));
 
         this.bindInterval(() => {
-            if (y <= originY) {
-                return this.restoreInterval();
-            }
             y = parseFloat(y - limit);
             this.render(y);
+            if (y <= originY)
+                this.restoreInterval();
         });
     }
 

@@ -104,13 +104,11 @@ export default class Bottom extends Base {
 
         const limit = Math.abs(zeroThrow(topY - y, this.intervalLimit));
         this.bindInterval(() => {
-            if (y <= topY) {
-                return this.finishInterval();
-            }
             y = parseFloat(y - limit);
             this.render(y);
+            if (y <= topY)
+                this.finishInterval();
         });
-
     }
 
     /**
@@ -118,9 +116,9 @@ export default class Bottom extends Base {
      * @returns {null}
      */
     resetMotion(pointer:Object):?void {
-        if (!this.motionFlag) {
+        if (!this.motionFlag)
             return null;
-        }
+
         this.motionFlag = false;
         const {originY} = this.originPosition;
         /*
@@ -135,11 +133,10 @@ export default class Bottom extends Base {
 
         const limit = Math.abs(zeroThrow(originY - y, this.intervalLimit));
         this.bindInterval(() => {
-            if (y >= originY) {
-                return this.restoreInterval();
-            }
             y = parseFloat(y + limit);
             this.render(y);
+            if (y >= originY)
+                this.restoreInterval();
         });
     }
 

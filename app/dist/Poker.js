@@ -27,6 +27,8 @@ export default class Poker {
     phaserGame:Object;
     /* status */
     status:"pending" | "moving" | "finish";
+    /* 啟用 */
+    enabled:boolean;
     /* status callback */
     dragPendingCallback:() => any;
     dragStartCallback:(x:number, y:number) => any;
@@ -41,6 +43,7 @@ export default class Poker {
         this.assertUrl = "";
         this.direction = "v";
         this.status = "pending";
+        this.enabled = true;
         this.backgroundColor = "#FFFFFF";
         this.width = this.height = this.padding = 0;
         this.dragPendingCallback = this.dragFinishCallback = () => {
@@ -84,6 +87,7 @@ export default class Poker {
         this.phaserGame.backgroundColor = this.backgroundColor;
         this.phaserGame.cardCode = this.cardCode;
         this.phaserGame.assertUrl = this.assertUrl;
+        this.phaserGame.enabled = this.enabled;
         this.phaserGame.dragPendingCallback = () => {
             this.status = "pending";
             this.dragPendingCallback();
@@ -107,7 +111,7 @@ export default class Poker {
      * 轉向
      */
     turn():void {
-        if (this.status === "pending") {
+        if (this.enabled && this.status === "pending") {
             this.status = "moving";
             this.phaserGame.state.start("mainStage", false, false, "turn", {
                 direction: this.direction,

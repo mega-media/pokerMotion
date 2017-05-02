@@ -25,6 +25,7 @@ window.onload = function () {
     game.height = 485;
     game.direction = "v";
     game.padding = 80;
+    //game.enabled = false;
     game.backgroundColor = "#000000";
     const openEle = document.getElementById("open");
     openEle && openEle.addEventListener('click', game.finish.bind(game));

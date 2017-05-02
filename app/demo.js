@@ -26,6 +26,7 @@ window.onload = function () {
     game.direction = "v";
     game.assertUrl = "assets/images"
     game.padding = 80;
+    //game.status = "finish";
     //game.enabled = false;
     game.backgroundColor = "#000000";
     const openEle = document.getElementById("open");
@@ -40,6 +41,7 @@ window.onload = function () {
     resetEle && resetEle.addEventListener('click', () => {
         game.destroy();
         game.cardCode = randomCard();
+        game.status = "pending";
         game.start();
     });
 

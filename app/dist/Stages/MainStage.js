@@ -8,7 +8,7 @@ import Motion                       from '../Components/Motion';
 import DragAction                   from '../Actions/DragAction';
 import {CARD_IMAGE, MOTION_IMAGE}   from '../Constants/Constants';
 
-type EffectType = "default" | "turn";
+type EffectType = "default" | "turn" | "opened";
 
 export default class MainStage {
     effect:EffectType;
@@ -65,8 +65,20 @@ export default class MainStage {
                 /* 啟動 */
                 this.dragAction.startDragMotion();
             }
-            /* 將開牌寫入 masterStage.finish */
-            this.masterStage.finish = this.dragAction.finishDragMotion.bind(this.dragAction);
+        } else if (this.effect === "opened") {
+            /* 有的話先移除 */
+            this.card && this.card.remove();
+            this.motion && this.motion.remove();
+            this.dragAction && this.dragAction.restore();
+
+            /* 繪製卡牌 */
+            this.card = new Card(this.masterStage);
+            /* 繪製移動區 */
+            this.motion = new Motion(this.masterStage);
+            /* 拖曳事件 */
+            this.dragAction = new DragAction(this.masterStage, this.card, this.motion);
+            /* 開牌 */
+            this.dragAction.finishDragMotion();
         } else {
             /* 有的話先移除 */
             this.motion && this.motion.remove();

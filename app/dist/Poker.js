@@ -104,7 +104,11 @@ export default class Poker {
             this.dragFinishCallback();
         }
         /* 執行主場景 */
-        this.phaserGame.state.add("mainStage", new MainStage(this.phaserGame), true);
+        this.phaserGame.state.add("mainStage", new MainStage(this.phaserGame));
+        this.phaserGame.state.start("mainStage", true, true, this.status === "finish" ? "opened" : "default", {
+            direction: this.direction,
+            element: this._getElementParamsByDirection(this.direction)
+        });
     }
 
     /**
@@ -129,13 +133,11 @@ export default class Poker {
         }
     }
 
-    finish():boolean {
-        if (this.phaserGame && this.phaserGame.finish) {
-            this.phaserGame.finish();
-        } else {
-            return false;
-        }
-        return true;
+    finish():void {
+        this.phaserGame.state.start("mainStage", false, false, "opened", {
+            direction: this.direction,
+            element: this._getElementParamsByDirection(this.direction)
+        });
     }
 
     destroy():void {

@@ -78,6 +78,7 @@ export default class Card {
         /* 遮罩 */
         if (Object.keys(this.positions).length) {
             const pokerMask = new Phaser.Graphics(this.masterStage);
+            pokerMask.beginFill(0xffffff);
             let firstPos = [];
             [
                 TOP_LEFT,

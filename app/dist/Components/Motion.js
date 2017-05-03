@@ -67,10 +67,17 @@ export default class Motion {
     }
 
     render(status?:string = 'default'):void {
-        let maskSprite = {};
-        /* 遮罩 */
-        const pokerMask = new Phaser.Graphics(this.masterStage);
+        /* 元件 */
+        if (!this.selfStage) {
+            const {element:{width, height, masterSize}} = this.masterStage;
+            this.selfStage = this.masterStage.add.sprite((masterSize - width) / 2, (masterSize - height) / 2, status === "opened" ? CARD_IMAGE : MOTION_IMAGE, this.cardIndex);
+            this.selfStage.width = width;
+            this.selfStage.height = height;
+        }
         if (Object.keys(this.positions).length) {
+            /* 遮罩 */
+            const pokerMask = new Phaser.Graphics(this.masterStage);
+            pokerMask.beginFill(0xffffff);
             let firstPos = [];
             [
                 TOP_LEFT,
@@ -88,19 +95,9 @@ export default class Motion {
                 }
             });
             pokerMask.lineTo(firstPos[0], firstPos[1]);
-            //遮罩
-            maskSprite = this.getMaskSprite();
+            this.selfStage = Object.assign(this.selfStage, this.getMaskSprite());
+            this.selfStage.mask = pokerMask;
         }
-
-        /* 元件 */
-        if (!this.selfStage) {
-            const {element:{width, height, masterSize}} = this.masterStage;
-            this.selfStage = this.masterStage.add.sprite((masterSize - width) / 2, (masterSize - height) / 2, status === "opened" ? CARD_IMAGE : MOTION_IMAGE, this.cardIndex);
-            this.selfStage.width = width;
-            this.selfStage.height = height;
-        }
-        this.selfStage = Object.assign(this.selfStage, maskSprite);
-        this.selfStage.mask = pokerMask;
         this.selfStage.anchor.setTo(this.selfStage.anchorX, this.selfStage.anchorY);
     }
 

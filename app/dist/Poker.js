@@ -36,7 +36,7 @@ export default class Poker {
     dragFinishCallback:() => any;
 
     constructor() {
-        this.renderer = Phaser.CANVAS;
+        this.renderer = Phaser.AUTO;
         this.phaserGame = {};
         this.parentElementId = "";
         this.cardCode = "";

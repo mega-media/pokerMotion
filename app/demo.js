@@ -28,7 +28,6 @@ window.onload = function () {
     game.padding = 80;
     //game.status = "finish";
     //game.enabled = false;
-    game.backgroundColor = "#000000";
     const openEle = document.getElementById("open");
     openEle && openEle.addEventListener('click', game.finish.bind(game));
 

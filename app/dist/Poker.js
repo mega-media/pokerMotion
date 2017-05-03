@@ -19,8 +19,6 @@ export default class Poker {
     padding:number;
     /* 方向 */
     direction:"v" | "h"; //vertical | horizontal
-    /* 背景顏色 */
-    backgroundColor:string;
     /* 渲染模式 */
     renderer:number;
     /* stage */
@@ -44,7 +42,6 @@ export default class Poker {
         this.direction = "v";
         this.status = "pending";
         this.enabled = true;
-        this.backgroundColor = "#FFFFFF";
         this.width = this.height = this.padding = 0;
         this.dragPendingCallback = this.dragFinishCallback = () => {
         };
@@ -79,12 +76,11 @@ export default class Poker {
         /* 建構主stage */
         const gameSize = Math.max(this.width, this.height) + 2 * this.padding;
         if (this.direction === "v")
-            this.phaserGame = new Phaser.Game(gameSize, gameSize, this.renderer, this.parentElementId);
+            this.phaserGame = new Phaser.Game(gameSize, gameSize, this.renderer, this.parentElementId, null, true);
         else
-            this.phaserGame = new Phaser.Game(gameSize, gameSize, this.renderer, this.parentElementId);
+            this.phaserGame = new Phaser.Game(gameSize, gameSize, this.renderer, this.parentElementId, null, true);
         this.phaserGame.element = this._getElementParamsByDirection(this.direction);
         this.phaserGame.direction = this.direction;
-        this.phaserGame.backgroundColor = this.backgroundColor;
         this.phaserGame.cardCode = this.cardCode;
         this.phaserGame.assertUrl = this.assertUrl;
         this.phaserGame.enabled = this.enabled;

@@ -38,7 +38,7 @@ export default class MainStage {
      * 預載
      */
     preload():void {
-        const {backgroundColor, assertUrl, direction} = this.masterStage;
+        const {assertUrl, direction} = this.masterStage;
         if (direction === "v") {
             this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.svg`), 216.2, 328);
             this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.svg`), 216.2, 328);
@@ -46,7 +46,6 @@ export default class MainStage {
             this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker_horizontal.svg`), 328, 216.2);
             this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber_horizontal.svg`), 328, 216.2);
         }
-        this.masterStage.stage.backgroundColor = backgroundColor;
     }
 
     /**

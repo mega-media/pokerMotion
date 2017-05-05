@@ -12,6 +12,7 @@ function randomCard() {
 
 var debug = true;
 window.onload = function () {
+    let enabled = true;
     /* Start */
     var game = new Poker();
     /**
@@ -27,7 +28,7 @@ window.onload = function () {
     game.assertUrl = "assets/images"
     game.padding = 80;
     //game.status = "finish";
-    //game.enabled = false;
+    game.enabled = enabled;
     const openEle = document.getElementById("open");
     openEle && openEle.addEventListener('click', game.finish.bind(game));
 
@@ -38,10 +39,17 @@ window.onload = function () {
 
     const resetEle = document.getElementById("reset");
     resetEle && resetEle.addEventListener('click', () => {
-        game.destroy();
+        game.enabled = enabled = true;
         game.cardCode = randomCard();
-        game.status = "pending";
-        game.start();
+        game.restart();
+    });
+
+    const enabledEle = document.getElementById('enabled');
+    enabledEle && enabledEle.addEventListener('click', () => {
+        if (game.status === "pending") {
+            game.enabled = enabled = !enabled;
+            game.restart();
+        }
     });
 
     const msgEle:any = document.getElementById("msg");

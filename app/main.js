@@ -4,4 +4,8 @@
  */
 import Poker from './dist/Poker';
 
+/* 檢查 phaser 有沒有載入 */
+if (typeof Phaser === "undefined")
+    throw "Phaser is not loaded";
+
 module.exports = Poker;

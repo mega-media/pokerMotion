@@ -30,7 +30,7 @@ export default class MainStage {
     init(effect:EffectType = "default", params:Object = {}) {
         this.effect = effect;
         Object.assign(this.masterStage, params);
-        if("tweenCallback" in params)
+        if ("tweenCallback" in params)
             this.callback = params.tweenCallback;
     }
 
@@ -67,6 +67,8 @@ export default class MainStage {
             if (this.masterStage.enabled) {
                 /* 啟動 */
                 this.dragAction.startDragMotion();
+            } else {
+                this.dragAction.restore();
             }
         } else if (this.effect === "opened") {
             /* 有的話先移除 */

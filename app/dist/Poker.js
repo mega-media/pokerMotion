@@ -111,7 +111,7 @@ export default class Poker {
      * 轉向
      */
     turn():void {
-        if (this.enabled && this.status === "pending") {
+        if (this.phaserGame.enabled && this.status === "pending") {
             this.status = "moving";
             const netDirection = this.direction === "v" ? "h" : "v"
             this.phaserGame.state.start("mainStage", false, false, "turn", {
@@ -126,6 +126,14 @@ export default class Poker {
             });
             this.direction = netDirection;
         }
+    }
+
+    restart():void {
+        this.status = "pending";
+        this.phaserGame.direction = this.direction;
+        this.phaserGame.cardCode = this.cardCode;
+        this.phaserGame.enabled = this.enabled;
+        this.phaserGame.state.start("mainStage", false, false, "default");
     }
 
     finish():void {

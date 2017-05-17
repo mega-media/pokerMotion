@@ -22,11 +22,11 @@ window.onload = function () {
      */
     game.cardCode = randomCard();
     game.parentElementId = "container";
-    game.width = 360;
-    game.height = 485;
+    game.width = 205;
+    game.height = 310;
     game.direction = "v";
     game.assertUrl = "assets/images"
-    game.padding = 80;
+    game.padding = 60;
     //game.status = "finish";
     game.enabled = enabled;
     const openEle = document.getElementById("open");

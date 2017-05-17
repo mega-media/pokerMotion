@@ -40,11 +40,11 @@ export default class MainStage {
     preload():void {
         const {assertUrl, direction} = this.masterStage;
         if (direction === "v") {
-            this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.png`), 216.2, 328);
-            this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.png`), 216.2, 328);
+            this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker.png`), 205, 310);
+            this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber.png`), 205, 310);
         } else {
-            this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker_horizontal.png`), 328, 216.2);
-            this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber_horizontal.png`), 328, 216.2);
+            this.masterStage.load.spritesheet(CARD_IMAGE, path.resolve(__dirname, `${assertUrl}/poker_horizontal.png`), 310, 205);
+            this.masterStage.load.spritesheet(MOTION_IMAGE, path.resolve(__dirname, `${assertUrl}/pokerNoNumber_horizontal.png`), 310, 205);
         }
     }
 

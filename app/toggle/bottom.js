@@ -8,29 +8,27 @@ import {
   APP_WIDTH,
   APP_HEIGHT
 } from '../constant';
-import { done } from '../main';
 import { middleBetweenPoints } from '../points';
 
 let maskPoints = clone(ORIGIN_POINTS);
 
 export const setCardParams = (card) => {
-  card.anchor.set(0.5);
   card.x = ORIGIN_POINTS[3][0];
   card.y = ORIGIN_POINTS[3][1];
 };
 
-export const pointerMove = (card, mask) => (x, y) => {
+export const pointerMove = (card, mask,finishCallback) => (x, y) => {
   /* 減去外層的距離 */
   const posY = y - (APP_HEIGHT - ELE_HEIGHT) / 2;
 
   if (posY <= (ELE_HEIGHT / 2)) {
     /* restore */
-    done();
+    finishCallback();
 
     /* auto slide */
     const ticker = new PIXI.ticker.Ticker();
     const limit = APP_HEIGHT / 2;
-    const limitPerSecond = 4;
+    const limitPerSecond = 8;
 
     ticker.add(deltaTime => {
       if ((card.y - limitPerSecond) <= limit) {
@@ -60,7 +58,7 @@ export const pointerMove = (card, mask) => (x, y) => {
 export const pointerOver = (card, mask) => {
   const ticker = new PIXI.ticker.Ticker();
   const limit = ORIGIN_POINTS[3][1] - AREA_SIZE;
-  const limitPerSecond = 4;
+  const limitPerSecond = 8;
 
   ticker.add(deltaTime => {
     if (card.y - limitPerSecond <= limit) {
@@ -85,7 +83,7 @@ export const pointerOver = (card, mask) => {
 export const pointerUp = (card, mask, finishCallback) => {
   const ticker = new PIXI.ticker.Ticker();
   const limit = ORIGIN_POINTS[3][1];
-  const limitPerSecond = 4;
+  const limitPerSecond = 8;
   ticker.add(deltaTime => {
     if (card.y + limitPerSecond >= limit) {
       ticker.stop();

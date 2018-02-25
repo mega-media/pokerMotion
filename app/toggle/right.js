@@ -8,24 +8,22 @@ import {
   APP_WIDTH,
   APP_HEIGHT
 } from '../constant';
-import { done } from '../main';
 import { middleBetweenPoints } from '../points';
 
 let maskPoints = clone(ORIGIN_POINTS);
 
 export const setCardParams = (card) => {
-  card.anchor.set(0.5);
   card.x = ORIGIN_POINTS[1][0];
   card.y = ORIGIN_POINTS[1][1];
 };
 
-export const pointerMove = (card, mask) => x => {
+export const pointerMove = (card, mask,finishCallback) => x => {
   /* 減去外層的距離 */
   const posX = x - (APP_WIDTH - ELE_WIDTH) / 2;
 
   if (posX <= ELE_WIDTH / 2) {
       /* restore */
-      done();
+    finishCallback();
 
       /* auto slide */
       const ticker = new PIXI.ticker.Ticker();

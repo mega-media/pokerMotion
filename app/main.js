@@ -35,6 +35,7 @@ import {
 /* constant */
 const IMAGE_PATH = 'src/faces';
 const BACK = 'back.png';
+const CARD = '0_10.svg';
 
 /* create an application */
 const app = new PIXI.Application(
@@ -64,27 +65,35 @@ mask.pivot.x = ELE_WIDTH / 2;
 mask.pivot.y = ELE_HEIGHT / 2;
 
 /* 底圖 */
-const backBg = new PIXI.Graphics();
-backBg.beginFill(0x000000, 1);
-backBg.lineStyle(0);
-backBg.drawRect(APP_WIDTH / 2, APP_HEIGHT / 2, ELE_WIDTH, ELE_HEIGHT);
-backBg.pivot.x = ELE_WIDTH / 2;
-backBg.pivot.y = ELE_HEIGHT / 2;
+const back = new PIXI.Graphics();
+back.beginFill(0xffffff, 1);
+back.lineStyle(0);
+back.drawRect(APP_WIDTH / 2, APP_HEIGHT / 2, ELE_WIDTH, ELE_HEIGHT);
+back.pivot.x = ELE_WIDTH / 2;
+back.pivot.y = ELE_HEIGHT / 2;
 
-const back = PIXI.Sprite.fromImage(IMAGE_PATH + '/' + BACK);
-back.x = APP_WIDTH / 2 - 15;
-back.y = APP_HEIGHT / 2 - 15;
-back.width = ELE_WIDTH + 30;
-back.height = ELE_HEIGHT + 30;
-backBg.addChild(back);
+const backImg = PIXI.Sprite.fromImage(IMAGE_PATH + '/' + BACK);
+backImg.x = APP_WIDTH / 2 - 15;
+backImg.y = APP_HEIGHT / 2 - 15;
+backImg.width = ELE_WIDTH + 30;
+backImg.height = ELE_HEIGHT + 30;
+back.addChild(backImg);
 
 /* 卡牌 */
 const card = new PIXI.Sprite(PIXI.Texture.WHITE);
-card.width = ELE_WIDTH;
-card.height = ELE_HEIGHT;
-/* 卡牌預設定位 */
 card.x = APP_WIDTH;
 card.y = APP_HEIGHT;
+card.width = ELE_WIDTH;
+card.height = ELE_HEIGHT;
+card.anchor.set(0.5);
+
+const cardTexture = PIXI.Texture.fromImage(IMAGE_PATH + '/' + CARD);
+const cardImg = new PIXI.Sprite(cardTexture);
+cardImg.anchor.set(0.5);
+cardImg.width = 10;  // ??? 不明白
+cardImg.height = 10; // ??? 不明白
+card.addChild(cardImg);
+
 /* 建立容器 */
 const container = new PIXI.Container();
 container.width = app.screen.width;
@@ -92,7 +101,7 @@ container.height = app.screen.height;
 container.pivot.x = container.x = app.screen.width / 2;
 container.pivot.y = container.y = app.screen.height / 2;
 /* 將底圖跟卡牌放進容器 */
-container.addChild(backBg, card);
+container.addChild(back, card);
 /* 遮罩要放在 app 底下 */
 app.stage.addChild(mask);
 /* 設定容器遮罩 */
@@ -102,7 +111,7 @@ app.stage.addChild(container);
 
 /* 觸發區域 */
 const toggle = new PIXI.Graphics();
-toggle.beginFill(0xff0000, 0.3);
+toggle.beginFill(0xff0000, 0);
 toggle.drawRect(APP_WIDTH / 2, APP_HEIGHT / 2, ELE_WIDTH, ELE_HEIGHT);
 toggle.pivot.x = ELE_WIDTH / 2;
 toggle.pivot.y = ELE_HEIGHT / 2;
@@ -229,7 +238,7 @@ toggle.on('pointermove', ({ data: { global: { x, y } } }) => {
   /* 拖曳 */
   if (handlerMap[trigger]) {
     const { move } = handlerMap[trigger];
-    move(card, mask)(x, y);
+    move(card, mask, done)(x, y);
     return false;
   }
 });

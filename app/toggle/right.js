@@ -10,96 +10,96 @@ import {
 } from '../constant';
 import { middleBetweenPoints } from '../points';
 
-let maskPoints = clone(ORIGIN_POINTS);
+let maskPoints = clone(ORIGIN_POINTS),
+  cardOriginX = 0,
+  cardOriginY = 0;
 
-export const setCardParams = (card) => {
-  card.x = ORIGIN_POINTS[1][0];
-  card.y = ORIGIN_POINTS[1][1];
+const _cardInit = (card) => {
+  card.x = cardOriginX = ORIGIN_POINTS[1][0];
+  card.y = cardOriginY = ORIGIN_POINTS[1][1];
 };
 
-export const pointerMove = (card, mask,finishCallback) => x => {
-  /* 減去外層的距離 */
-  const posX = x - (APP_WIDTH - ELE_WIDTH) / 2;
+const _maskInit = (mask) => {
+  mask.refresh(ORIGIN_POINTS);
+};
 
-  if (posX <= ELE_WIDTH / 2) {
+export const setCardParams = (card) => {
+  card.anchor.set(0.5);
+  card.getChildAt(0).anchor.set(0.5);
+  card.rotation = 0;
+  _cardInit(card);
+};
+
+const _moving = (card, mask) => (x) => {
+  card.x = x;
+  x -= card.width / 2;
+  const { x: middleX } = middleBetweenPoints(x + ELE_WIDTH / 2, ORIGIN_POINTS[1][0], 0, 0);
+  maskPoints[1][0] = maskPoints[2][0] = middleX;
+  mask.refresh(maskPoints);
+};
+
+export const pointerMove = (card, mask, finishCallback, openedCallback) => {
+  const move = _moving(card, mask);
+  return x => {
+    /* 減去外層的距離 */
+    const posX = x - (APP_WIDTH - ELE_WIDTH) / 2;
+
+    if (posX <= ELE_WIDTH / 2) {
       /* restore */
-    finishCallback();
+      finishCallback();
 
       /* auto slide */
       const ticker = new PIXI.ticker.Ticker();
-      const limit = APP_WIDTH / 2;
+      const limit = ORIGIN_POINTS[0][0];
       const limitPerSecond = 4;
 
       ticker.add(deltaTime => {
         if (card.x - limitPerSecond <= limit) {
           ticker.stop();
-          card.x = limit;
-
-          maskPoints[1][0] = maskPoints[2][0] = ORIGIN_POINTS[1][0];
-          mask.refresh(maskPoints);
+          openedCallback();
           return false;
         }
-
-        card.x -= limitPerSecond;
-
-        maskPoints[1][0] -= limitPerSecond / 2;
-        maskPoints[2][0] -= limitPerSecond / 2;
-        mask.refresh(maskPoints);
+        move(card.x - limitPerSecond);
       });
       ticker.start();
-  } else if (posX < ELE_WIDTH - AREA_SIZE) {
-    card.x = x + card.width / 2;
-    const { x: middleX } = middleBetweenPoints(x + ELE_WIDTH / 2, ORIGIN_POINTS[1][0], 0, 0);
-    maskPoints[1][0] = maskPoints[2][0] = middleX;
-    mask.refresh(maskPoints);
-  }
+    } else if (posX < ELE_WIDTH - AREA_SIZE)
+      move(x + card.width / 2);
+
+  };
 };
 
 export const pointerOver = (card, mask) => {
+  const move = _moving(card, mask);
   const ticker = new PIXI.ticker.Ticker();
-  const limit = ORIGIN_POINTS[1][0] - AREA_SIZE;
+  const limit = cardOriginX - AREA_SIZE;
   const limitPerSecond = 4;
 
   ticker.add(deltaTime => {
     if (card.x - limitPerSecond <= limit) {
       ticker.stop();
-      card.x = limit;
-
-      maskPoints[1][0] = maskPoints[2][0] = ORIGIN_POINTS[1][0] - AREA_SIZE / 2;
-      mask.refresh(maskPoints);
+      move(limit);
       return false;
     }
-
-    card.x -= limitPerSecond;
-
-    maskPoints[1][0] -= limitPerSecond / 2;
-    maskPoints[2][0] -= limitPerSecond / 2;
-    mask.refresh(maskPoints);
+    move(card.x - limitPerSecond);
   });
   ticker.start();
   return ticker;
 };
 
 export const pointerUp = (card, mask, finishCallback) => {
+  const move = _moving(card, mask);
   const ticker = new PIXI.ticker.Ticker();
-  const limit = ORIGIN_POINTS[1][0];
+  const limit = cardOriginX;
   const limitPerSecond = 4;
   ticker.add(deltaTime => {
     if (card.x + limitPerSecond >= limit) {
       ticker.stop();
-      card.x = limit;
-
-      maskPoints[1][0] = maskPoints[2][0] = ORIGIN_POINTS[1][0];
-      mask.refresh(maskPoints);
+      _cardInit(card);
+      _maskInit(mask);
       finishCallback();
       return false;
     }
-
-    card.x += limitPerSecond;
-
-    maskPoints[1][0] += limitPerSecond / 2;
-    maskPoints[2][0] += limitPerSecond / 2;
-    mask.refresh(maskPoints);
+    move(card.x + limitPerSecond);
   });
   ticker.start();
   return ticker;

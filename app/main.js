@@ -31,6 +31,12 @@ import {
   pointerUp as rightSideUp,
   pointerOver as rightSideOver
 } from './toggle/right';
+import {
+  setCardParams as bottomRightCardParams,
+  pointerMove as bottomRightSideMove,
+  pointerUp as bottomRightSideUp,
+  pointerOver as bottomRightSideOver
+} from './toggle/bottom-right';
 
 /* constant */
 const IMAGE_PATH = 'src/faces';
@@ -81,11 +87,11 @@ back.addChild(backImg);
 
 /* 卡牌 */
 const card = new PIXI.Sprite(PIXI.Texture.WHITE);
+card.anchor.set(0.5);
 card.x = APP_WIDTH;
 card.y = APP_HEIGHT;
 card.width = ELE_WIDTH;
 card.height = ELE_HEIGHT;
-card.anchor.set(0.5);
 
 const cardTexture = PIXI.Texture.fromImage(IMAGE_PATH + '/' + CARD);
 const cardImg = new PIXI.Sprite(cardTexture);
@@ -112,9 +118,9 @@ app.stage.addChild(container);
 /* 觸發區域 */
 const toggle = new PIXI.Graphics();
 toggle.beginFill(0xff0000, 0);
-toggle.drawRect(APP_WIDTH / 2, APP_HEIGHT / 2, ELE_WIDTH, ELE_HEIGHT);
-toggle.pivot.x = ELE_WIDTH / 2;
-toggle.pivot.y = ELE_HEIGHT / 2;
+toggle.drawRect(APP_WIDTH / 2, APP_HEIGHT / 2, APP_WIDTH, APP_HEIGHT);
+toggle.pivot.x = APP_WIDTH / 2;
+toggle.pivot.y = APP_HEIGHT / 2;
 toggle.interactive = true; // 設定可以互動
 toggle.buttonMode = true; // 當滑鼠滑過時顯示為手指圖示
 /* 與容器、遮罩同一個 parent */
@@ -176,6 +182,12 @@ const handlerMap = {
     up: rightSideUp,
     move: rightSideMove,
     over: rightSideOver
+  },
+  BOTTOM_RIGHT: {
+    setParams: bottomRightCardParams,
+    up: bottomRightSideUp,
+    move: bottomRightSideMove,
+    over: bottomRightSideOver
   }
 };
 
@@ -201,9 +213,6 @@ toggle.on('pointerdown', _ => {
   dragFlag = true;
   return false;
 });
-
-/* 離開觸發區的監聽 */
-toggle.on('pointerout', _ => triggerReset(resetCallback));
 
 /* 點擊(放開)行為監聽 */
 toggle.on('pointerup', _ => {
@@ -238,18 +247,27 @@ toggle.on('pointermove', ({ data: { global: { x, y } } }) => {
   /* 拖曳 */
   if (handlerMap[trigger]) {
     const { move } = handlerMap[trigger];
-    move(card, mask, done)(x, y);
+    move(card, mask, done, opened)(x, y);
     return false;
   }
 });
 
 /* 開牌時候呼叫，解除所有行為監聽，並移除觸發區 */
 export const done = _ => {
-  toggle.off('pointerout');
   toggle.off('pointerup');
   toggle.off('pointerdown');
   toggle.off('pointermove');
   app.stage.removeChild(toggle);
+};
+
+export const opened = _ => {
+  card.anchor.set(0.5);
+  card.getChildAt(0).anchor.set(0.5);
+  card.rotation = 0;
+  card.x = ORIGIN_POINTS[0][0];
+  card.y = ORIGIN_POINTS[0][1];
+
+  mask.refresh(ORIGIN_POINTS);
 };
 
 // const t = new PIXI.ticker.Ticker();

@@ -233,6 +233,8 @@ toggle.on('pointermove', ({ data: { global: { x, y } } }) => {
 
       callback = _ => {
         trigger = activeTrigger;
+        /* 重置遮罩 */
+        mask.refresh(ORIGIN_POINTS);
         /* 設定卡牌定位 */
         setParams(card);
         /* over 事件 */

@@ -7,8 +7,36 @@ import {
   APP_WIDTH, APP_HEIGHT
 } from './constant';
 import { flatten, forEach } from 'ramda';
-/* 區域行為對應表 */
-import handlerMap from './mapping';
+import {
+  setCardParams as topCardParams,
+  pointerMove as topSideMove,
+  pointerUp as topSideUp,
+  pointerOver as topSideOver
+} from './toggle/top';
+import {
+  setCardParams as bottomCardParams,
+  pointerMove as bottomSideMove,
+  pointerUp as bottomSideUp,
+  pointerOver as bottomSideOver
+} from './toggle/bottom';
+import {
+  setCardParams as leftCardParams,
+  pointerMove as leftSideMove,
+  pointerUp as leftSideUp,
+  pointerOver as leftSideOver
+} from './toggle/left';
+import {
+  setCardParams as rightCardParams,
+  pointerMove as rightSideMove,
+  pointerUp as rightSideUp,
+  pointerOver as rightSideOver
+} from './toggle/right';
+import {
+  setCardParams as bottomRightCardParams,
+  pointerMove as bottomRightSideMove,
+  pointerUp as bottomRightSideUp,
+  pointerOver as bottomRightSideOver
+} from './toggle/bottom-right';
 
 /* constant */
 const IMAGE_PATH = 'src/faces';
@@ -20,7 +48,7 @@ const app = new PIXI.Application(
   APP_WIDTH,
   APP_HEIGHT,
   {
-    // transparent: true
+    //transparent: true
     backgroundColor: 0x1099bb
   }
 );
@@ -30,39 +58,32 @@ document.getElementById('container').appendChild(app.view);
 /* set Graphics prototype */
 PIXI.Graphics.prototype.refresh = function (maskPoints) {
   this.clear();
-  this.beginFill(0x00ff00, 0.3);
+  this.beginFill(0x000000, 0);
   this.drawPolygon(flatten(maskPoints));
 };
 
 /* 遮罩 */
 const mask = new PIXI.Graphics();
-mask.beginFill(0x00ff00, 0.3);
+mask.beginFill(0x0000ff, 0.3);
 mask.lineStyle(0);
 mask.drawPolygon(flatten(ORIGIN_POINTS));
 mask.pivot.x = ELE_WIDTH / 2;
 mask.pivot.y = ELE_HEIGHT / 2;
 
 /* 底圖 */
-const back = new PIXI.Container();
-back.width = ELE_WIDTH;
-back.height = ELE_HEIGHT;
-back.x = ORIGIN_POINTS[0][0];
-back.y = ORIGIN_POINTS[0][1];
+const back = new PIXI.Graphics();
+back.beginFill(0xffffff, 1);
+back.lineStyle(0);
+back.drawRect(APP_WIDTH / 2, APP_HEIGHT / 2, ELE_WIDTH, ELE_HEIGHT);
 back.pivot.x = ELE_WIDTH / 2;
 back.pivot.y = ELE_HEIGHT / 2;
 
-const backBg = new PIXI.Graphics();
-backBg.beginFill(0xffffff, 1);
-backBg.lineStyle(0);
-backBg.drawRoundedRect(0, 0, ELE_WIDTH, ELE_HEIGHT, 10);
-
 const backImg = PIXI.Sprite.fromImage(IMAGE_PATH + '/' + BACK);
-backImg.x = -15;
-backImg.y = -15;
-backImg.width = ELE_WIDTH + 30;
-backImg.height = ELE_HEIGHT + 30;
-
-back.addChild(backBg);
+backImg.x = APP_HEIGHT + ELE_HEIGHT / 2 + 15;
+backImg.y = APP_WIDTH / 2 - 15;
+backImg.width = ELE_HEIGHT + 30;
+backImg.height = ELE_WIDTH + 30;
+backImg.rotation = 90 * (Math.PI / 180);
 back.addChild(backImg);
 
 /* 卡牌 */
@@ -78,10 +99,11 @@ card.reset = _ => {
 };
 card.reset();
 
-const cardBg = new PIXI.Graphics();
-cardBg.beginFill(0xffffff, 1);
-cardBg.lineStyle(0);
-cardBg.drawRoundedRect(0, 0, ELE_WIDTH, ELE_HEIGHT, 10);
+const cardBg = new PIXI.Sprite(PIXI.Texture.WHITE);
+cardBg.x = 0;
+cardBg.y = 0;
+cardBg.width = ELE_WIDTH;
+cardBg.height = ELE_HEIGHT;
 
 const cardTexture = PIXI.Texture.fromImage(IMAGE_PATH + '/' + CARD);
 const cardImg = new PIXI.Sprite(cardTexture);
@@ -89,9 +111,11 @@ cardImg.x = 0;
 cardImg.y = 0;
 cardImg.width = ELE_WIDTH;
 cardImg.height = ELE_HEIGHT;
+// cardImg.anchor.set(0.5);
 
 card.addChild(cardBg);
 card.addChild(cardImg);
+
 /* 建立容器 */
 const container = new PIXI.Container();
 container.width = app.screen.width;
@@ -103,9 +127,10 @@ container.addChild(back, card);
 /* 遮罩要放在 app 底下 */
 app.stage.addChild(mask);
 /* 設定容器遮罩 */
-container.mask = mask;
+// container.mask = mask;
 /* 容器與遮罩同一個 parent */
 app.stage.addChild(container);
+
 /* 觸發區域 */
 const toggle = new PIXI.Graphics();
 toggle.beginFill(0xff0000, 0);
@@ -146,6 +171,40 @@ const findTrigger = (x, y) => {
   if (posY !== 1 && !(x > 0 && x < ELE_WIDTH)) posY = 1;
 
   return posBlock[posY][posX];
+};
+
+/* 區域行為對應表 */
+const handlerMap = {
+  TOP: {
+    setParams: topCardParams,
+    up: topSideUp,
+    move: topSideMove,
+    over: topSideOver
+  },
+  BOTTOM: {
+    setParams: bottomCardParams,
+    up: bottomSideUp,
+    move: bottomSideMove,
+    over: bottomSideOver
+  },
+  LEFT: {
+    setParams: leftCardParams,
+    up: leftSideUp,
+    move: leftSideMove,
+    over: leftSideOver
+  },
+  RIGHT: {
+    setParams: rightCardParams,
+    up: rightSideUp,
+    move: rightSideMove,
+    over: rightSideOver
+  },
+  BOTTOM_RIGHT: {
+    setParams: bottomRightCardParams,
+    up: bottomRightSideUp,
+    move: bottomRightSideMove,
+    over: bottomRightSideOver
+  }
 };
 
 /* 重置之後做的事 */
@@ -232,3 +291,12 @@ export const opened = _ => {
 
   mask.refresh(ORIGIN_POINTS);
 };
+opened();
+// const t = new PIXI.ticker.Ticker();
+// t.add(deltaTime => {
+//
+//   /* 旋轉 1/4 圓 ，也就是 90 度 */
+//   container.rotation = Math.PI * 2 * (1 / 4);
+//   t.stop();
+// });
+// setTimeout(_ => t.start(), 3000);

@@ -24,9 +24,6 @@ const _maskInit = (mask) => {
 };
 
 export const setCardParams = (card) => {
-  card.anchor.set(0.5);
-  card.getChildAt(0).anchor.set(0.5);
-  card.rotation = 0;
   _cardInit(card);
 };
 
@@ -51,7 +48,7 @@ export const pointerMove = (card, mask, finishCallback, openedCallback) => {
       /* auto slide */
       const ticker = new PIXI.ticker.Ticker();
       const limit = ORIGIN_POINTS[0][0];
-      const limitPerSecond = 4;
+      const limitPerSecond = 8;
 
       ticker.add(deltaTime => {
         if ((card.x + limitPerSecond) >= limit) {
@@ -73,7 +70,7 @@ export const pointerOver = (card, mask) => {
   const move = _moving(card, mask);
   const ticker = new PIXI.ticker.Ticker();
   const limit = cardOriginX + AREA_SIZE;
-  const limitPerSecond = 4;
+  const limitPerSecond = 8;
 
   ticker.add(deltaTime => {
     if (card.x + limitPerSecond >= limit) {
@@ -91,7 +88,7 @@ export const pointerUp = (card, mask, finishCallback) => {
   const move = _moving(card, mask);
   const ticker = new PIXI.ticker.Ticker();
   const limit = cardOriginX;
-  const limitPerSecond = 4;
+  const limitPerSecond = 8;
   ticker.add(deltaTime => {
     if (card.x - limitPerSecond <= limit) {
       ticker.stop();

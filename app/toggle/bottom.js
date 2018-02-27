@@ -24,9 +24,6 @@ const _maskInit = (mask) => {
 };
 
 export const setCardParams = (card) => {
-  card.anchor.set(0.5);
-  card.getChildAt(0).anchor.set(0.5);
-  card.rotation = 0;
   _cardInit(card);
 };
 

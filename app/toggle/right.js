@@ -1,103 +1,87 @@
 import { clone } from 'ramda';
-import {
-  PADDING,
-  AREA_SIZE,
-  ELE_HEIGHT,
-  ELE_WIDTH,
-  ORIGIN_POINTS,
-  APP_WIDTH,
-  APP_HEIGHT
-} from '../constant';
 import { middleBetweenPoints } from '../points';
 
-let maskPoints = clone(ORIGIN_POINTS),
-  cardOriginX = 0,
-  cardOriginY = 0;
+export default (card, mask, options) => {
+  const { APP_WIDTH, APP_HEIGHT, ELE_WIDTH, ELE_HEIGHT, ORIGIN_POINTS, AREA_SIZE, PADDING } = options;
+  let maskPoints = clone(ORIGIN_POINTS),
+    cardOriginX = 0,
+    cardOriginY = 0;
+  const limitPerSecond = 8;
 
-const _cardInit = (card) => {
-  card.x = cardOriginX = ORIGIN_POINTS[1][0];
-  card.y = cardOriginY = ORIGIN_POINTS[1][1];
-};
+  const _cardInit = _ => {
+    card.x = cardOriginX = ORIGIN_POINTS[1][0];
+    card.y = cardOriginY = ORIGIN_POINTS[1][1];
+  };
 
-const _maskInit = (mask) => {
-  mask.refresh(ORIGIN_POINTS);
-};
+  const _maskInit = _ => {
+    mask.refresh(ORIGIN_POINTS);
+  };
 
-export const setCardParams = (card) => {
-  _cardInit(card);
-};
+  const _move = (x) => {
+    card.x = x;
+    x -= card.width / 2;
+    const { x: middleX } = middleBetweenPoints(x + ELE_WIDTH / 2, ORIGIN_POINTS[1][0], 0, 0);
+    maskPoints[1][0] = maskPoints[2][0] = middleX;
+    mask.refresh(maskPoints);
+  };
 
-const _moving = (card, mask) => (x) => {
-  card.x = x;
-  x -= card.width / 2;
-  const { x: middleX } = middleBetweenPoints(x + ELE_WIDTH / 2, ORIGIN_POINTS[1][0], 0, 0);
-  maskPoints[1][0] = maskPoints[2][0] = middleX;
-  mask.refresh(maskPoints);
-};
-
-export const pointerMove = (card, mask, finishCallback, openedCallback) => {
-  const move = _moving(card, mask);
-  return x => {
-    /* 減去外層的距離 */
-    const posX = x - (APP_WIDTH - ELE_WIDTH) / 2;
-
-    if (posX <= ELE_WIDTH / 2) {
-      /* restore */
-      finishCallback();
-
-      /* auto slide */
+  return {
+    setParams: _cardInit,
+    up: finishCallback => {
       const ticker = new PIXI.ticker.Ticker();
-      const limit = ORIGIN_POINTS[0][0];
-      const limitPerSecond = 8;
+      const limit = cardOriginX;
+
+      ticker.add(deltaTime => {
+        if (card.x + limitPerSecond >= limit) {
+          ticker.stop();
+          _cardInit();
+          _maskInit();
+          finishCallback();
+          return false;
+        }
+        _move(card.x + limitPerSecond);
+      });
+      ticker.start();
+      return ticker;
+    },
+    move: (finishCallback, openedCallback) => (x, y) => {
+      /* 減去外層的距離 */
+      const posX = x - (APP_WIDTH - ELE_WIDTH) / 2;
+
+      if (posX <= ELE_WIDTH / 2) {
+        /* restore */
+        finishCallback();
+
+        /* auto slide */
+        const ticker = new PIXI.ticker.Ticker();
+        const limit = ORIGIN_POINTS[0][0];
+
+        ticker.add(deltaTime => {
+          if (card.x - limitPerSecond <= limit) {
+            ticker.stop();
+            openedCallback();
+            return false;
+          }
+          _move(card.x - limitPerSecond);
+        });
+        ticker.start();
+      } else if (posX < ELE_WIDTH - AREA_SIZE)
+        _move(x + card.width / 2);
+    },
+    over: _ => {
+      const ticker = new PIXI.ticker.Ticker();
+      const limit = cardOriginX - AREA_SIZE;
 
       ticker.add(deltaTime => {
         if (card.x - limitPerSecond <= limit) {
           ticker.stop();
-          openedCallback();
+          _move(limit);
           return false;
         }
-        move(card.x - limitPerSecond);
+        _move(card.x - limitPerSecond);
       });
       ticker.start();
-    } else if (posX < ELE_WIDTH - AREA_SIZE)
-      move(x + card.width / 2);
-
+      return ticker;
+    }
   };
-};
-
-export const pointerOver = (card, mask) => {
-  const move = _moving(card, mask);
-  const ticker = new PIXI.ticker.Ticker();
-  const limit = cardOriginX - AREA_SIZE;
-  const limitPerSecond = 8;
-
-  ticker.add(deltaTime => {
-    if (card.x - limitPerSecond <= limit) {
-      ticker.stop();
-      move(limit);
-      return false;
-    }
-    move(card.x - limitPerSecond);
-  });
-  ticker.start();
-  return ticker;
-};
-
-export const pointerUp = (card, mask, finishCallback) => {
-  const move = _moving(card, mask);
-  const ticker = new PIXI.ticker.Ticker();
-  const limit = cardOriginX;
-  const limitPerSecond = 8;
-  ticker.add(deltaTime => {
-    if (card.x + limitPerSecond >= limit) {
-      ticker.stop();
-      _cardInit(card);
-      _maskInit(mask);
-      finishCallback();
-      return false;
-    }
-    move(card.x + limitPerSecond);
-  });
-  ticker.start();
-  return ticker;
-};
+}

@@ -68,7 +68,7 @@ module.exports = {
   entry: {
     bundle: [
       'babel-polyfill',
-      path.resolve(__dirname, 'app/main.js')
+      path.resolve(__dirname, 'app/index.js')
     ]
   }
 };
